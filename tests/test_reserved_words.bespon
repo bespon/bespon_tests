@@ -1,0 +1,44 @@
+# Test reserved words:  none, true, false, inf, nan, and invalid
+# capitalizations thereof.
+
+
+|=== test_nonetype
+status = valid
+bespon = 'none'
+json = 'null'
+
+
+|=== test_bool_true
+status = valid
+bespon = 'true'
+json = 'true'
+
+
+|=== test_bool_false
+status = valid
+bespon = 'false'
+json = 'false'
+
+
+|=== test_float_positive_inf
+status = valid
+bespon = ['inf', '+inf', '+\t\x20inf']
+json = '[":float", "inf"]'
+
+
+|=== test_float_negative_inf
+status = valid
+bespon = ['-inf', '-\t\x20inf']
+json = '[":float", "-inf"]'
+
+
+|=== test_float_nan
+status = valid
+bespon = 'nan'
+json = '[":float", "nan"]'
+
+
+|=== test_invalid_capitalization
+status = invalid
+bespon = ['None', 'NONE', 'True', 'tRue', 'TRUE', 'False', 'fAlse', 'falsE',
+          'Inf', 'iNf', 'inF', 'INF', 'Nan', 'NaN', 'NAN', 'nAn']

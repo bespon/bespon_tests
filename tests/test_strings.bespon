@@ -1,0 +1,26 @@
+# Test string types
+
+
+|=== test_keylike
+status = valid
+bespon = ['string', "'string'", '"string"', '`string`']
+json = '"string"'
+
+
+|=== test_unquoted
+status = valid
+bespon = ['string string']
+json = '"string string"'
+
+
+|=== test_invalid_unquoted
+status = invalid
+bespon = ['string\x20\x20string', 'string \uFFFFstring']
+
+
+|=== test_inline_singlequoted
+status = valid
+bespon = `'string\r\n'`
+json = `"string\r\n"`
+
+

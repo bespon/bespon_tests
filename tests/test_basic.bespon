@@ -1,0 +1,91 @@
+# These tests simply check whether a variety of valid structures can be
+# loaded.  The actual values are NOT checked.
+
+
+|=== test_root_scalar
+status = valid
+bespon = ['none', 'true', 'false',
+          '1', '0b101', '0o777', '0x0af',
+          '1.0', '1e5', '1.1e1', 'inf', '+inf', '-inf', 'nan', '0xa.fp2',
+          'string', 'string string',
+          "'string'", "'string\nstring'",
+          '"string"', '"string\nstring"',
+          '`string`', '`string\nstring`',
+          "|'''\nstring\n|'''/\n",
+          '|"""\nstring\n|"""/\n',
+          '|```\nstring\n|```/\n']
+
+
+|=== test_root_noninline_dict
+status = valid
+bespon = |'''
+         key = value
+         another_key = another_value
+         |'''/
+
+
+|=== test_root_inline_dict
+status = valid
+bespon = |'''
+         {key = value,
+          another_key = another_value}
+         |'''/
+
+
+|=== test_root_noninline_list
+status = valid
+bespon = |'''
+         * value
+         * another value
+         |'''/
+
+
+|=== test_root_inline_list
+status = valid
+bespon = |'''
+         [value,
+          another value]
+         |'''/
+
+
+|=== test_root_section
+status = valid
+bespon =
+  * |'''
+    |=== section
+    key = value
+    |'''/
+  * |'''
+    |=== section
+    key = value
+    |===/
+    |'''/
+  * |'''
+    |=== section.subsection
+    key = value
+    |'''/
+  * |'''
+    |=== *
+    key = value
+    |'''/
+  * |'''
+    |=== section.*
+    key = value
+    |'''/
+
+
+|=== test_root_key_path
+status = valid
+bespon =
+  * |'''
+    key.subkey = value
+    |'''/
+  * |'''
+    key.subkey.subsubkey = value
+    |'''/
+  * |'''
+    key.* = value
+    |'''/
+  * |'''
+    key.subkey.* = value
+    |'''/
