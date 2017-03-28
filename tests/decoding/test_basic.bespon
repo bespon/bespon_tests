@@ -1,3 +1,7 @@
+# Copyright (c) 2017, Geoffrey M. Poore
+# License:  Creative Commons Attribution 4.0 International Public License
+#           https://creativecommons.org/licenses/by/4.0/legalcode
+#
 # These tests simply check whether a variety of valid structures can be
 # loaded.  The actual values are NOT checked.
 

@@ -8,7 +8,7 @@
 #
 
 '''
-Run all BespON tests using bespon package for Python.
+Run all BespON decoding tests using bespon package for Python.
 
 Run with `--verbose` for more detailed output.  Run with `--bespon_py` to
 specify a path to the bespon package.  This will test the code at the
@@ -39,9 +39,9 @@ parser.add_argument('--verbose', default=False, action='store_true',
 args = parser.parse_args()
 
 if os.path.isdir('bespon_tests'):
-    test_dir = os.path.abspath(os.path.join('bespon_tests', 'tests'))
+    test_dir = os.path.abspath(os.path.join('bespon_tests', 'tests', 'decoding'))
 elif os.path.isdir('../bespon_tests') and os.path.isdir('tests'):
-    test_dir = os.path.abspath('tests')
+    test_dir = os.path.abspath(os.path.join('tests', 'decoding'))
 else:
     sys.exit('Could not find directory "tests"')
 
@@ -59,17 +59,28 @@ def _int64(s, base=10):
         raise ValueError
     return n
 
-json_typelist_parsers = {':int64': _int64,
+JSON_TYPELIST_PARSERS = {':int64': _int64,
                          ':bigint': int,
                          ':int64:2': lambda x: _int64(x, 2),
                          ':int64:8': lambda x: _int64(x, 8),
                          ':int64:16': lambda x: _int64(x, 16),
                          ':float64': float,
                          ':float64:16': float.fromhex,
+                         # Dict is needed to provide mappings with non-string
+                         # keys (none, bool, int)
                          ':dict': dict}
 
 
 def find_json_untyped(obj, parent, index, unresolved):
+    '''
+    Within loaded data, recursively find all lists of the form
+        [":<type>", <object>]
+    and add information about them to a list `unresolved`.  This list will
+    then be used to replace all such lists, starting at the deepest nesting
+    level and working out, with the result of applying `<type>` to `<object>`.
+    This provides a way to convert data loaded in JSON format into data
+    structures that JSON itself does not support.
+    '''
     if isinstance(obj, dict):
         for k, v in obj.items():
             find_json_untyped(v, obj, k, unresolved)
@@ -85,13 +96,22 @@ def find_json_untyped(obj, parent, index, unresolved):
 
 
 def json_typelist_loads(s):
+    '''
+    Load a string as JSON data, and process all lists of the form
+        [":<type>", <object>]
+    by applying `<type>` to `<object>`.  This provides a way to convert data
+    loaded in JSON format into data structures that JSON itself does not
+    support.
+    '''
     json_data = json.loads(s)
+    # In case top level isn't a list or dict, provide a wrapper
     json_wrapped = [json_data]
     unresolved = []
     find_json_untyped(json_data, json_wrapped, 0, unresolved)
     if unresolved:
+        # Work from deepest nesting level outward; hence `reversed()`
         for typename, obj, parent, index in reversed(unresolved):
-            parent[index] = json_typelist_parsers[typename](obj)
+            parent[index] = JSON_TYPELIST_PARSERS[typename](obj)
     return json_wrapped[0]
 
 
@@ -149,8 +169,8 @@ for fname in test_fnames:
                 failed_count += 1
                 failed_tests[fname].append(test_key)
         elif test_val['status'] == 'implementation':
-            # Each piece of data must either fail to load, or must agree with
-            # the corresponding json
+            # Each individual set of data must either fail to load, or must
+            # agree with the corresponding json
             if isinstance(test_val['json'], str):
                 json_data = [json_typelist_loads(test_val['json'])]*len(raw_data)
             else:
@@ -178,5 +198,5 @@ if failed_tests:
         print('\nIn {0}:{1}'.format(fname, ''.join('\n* {0}'.format(m) for m in messages)))
 
 
-if test_count != 0 or failed_tests:
+if test_count == 0 or failed_tests:
     sys.exit(1)
