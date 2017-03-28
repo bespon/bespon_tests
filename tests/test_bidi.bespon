@@ -1,0 +1,33 @@
+# Test bidirectional text
+
+|=== test_bidi
+status = valid
+bespon =
+  * |```
+    'א' =
+      '1'
+    'ב' =
+      '2'
+    |```/
+json =
+  |```
+  {"א":
+     "1",
+   "ב":
+     "2"}
+  |```/
+
+
+|=== test_invalid_bidi
+status = invalid
+bespon =
+  * |```
+    'א' = '1'
+    'ב' =
+      '2'
+    |```/
+  * |```
+    'א' =
+      '1'
+    'ב' = '2'
+    |```/
