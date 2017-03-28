@@ -9,18 +9,389 @@ json = '"string"'
 
 |=== test_unquoted
 status = valid
-bespon = ['string string']
-json = '"string string"'
+bespon = ['string string string']
+json = '"string string string"'
 
 
 |=== test_invalid_unquoted
 status = invalid
-bespon = ['string\x20\x20string', 'string \uFFFFstring']
+bespon =
+  * `string\x20\x20string`
+  * `string \uFFFFstring`
+  * |```
+    string
+     string
+    |```/
 
 
-|=== test_inline_singlequoted
+|=== test_inline_single_quoted
 status = valid
-bespon = `'string\r\n'`
+bespon =
+  * `'string string string'`
+  * |```
+    'string
+    string string'
+    |```/
+  * |```
+    'string
+     string string'
+    |```/
+  * |```
+    'string
+      string string'
+    |```/
+  * |```
+    '''string
+       string string'''
+    |```/
+  * |```
+    ''''''string
+          string string''''''
+    |```/
+  * |```
+    'string
+    string
+    string'
+    |```/
+  * |```
+    'string
+     string
+     string'
+    |```/
+  * |```
+    'string
+      string
+      string'
+    |```/
+json = `"string string string"`
+
+
+|=== test_long_delim_inline_single_quoted
+status = valid
+bespon =
+  * |```
+    ''''''string'''
+          string string''''''
+    |```/
+  * |```
+    ''''''string\''''''
+          string string''''''
+    |```/
+json =
+  * `"string''' string string"`
+  * `"string'''''' string string"`
+
+
+|=== test_inline_double_quoted
+status = valid
+bespon =
+  * `"string string string"`
+  * |```
+    "string
+    string string"
+    |```/
+  * |```
+    "string
+     string string"
+    |```/
+  * |```
+    "string
+      string string"
+    |```/
+  * |```
+    """string
+       string string"""
+    |```/
+  * |```
+    """"""string
+          string string""""""
+    |```/
+  * |```
+    "string
+    string
+    string"
+    |```/
+  * |```
+    "string
+     string
+     string"
+    |```/
+  * |```
+    "string
+      string
+      string"
+    |```/
+json = `"string string string"`
+
+
+|=== test_long_delim_inline_double_quoted
+status = valid
+bespon =
+  * |```
+    """"""string"""
+          string string""""""
+    |```/
+  * |```
+    """"""string\""""""
+          string string""""""
+    |```/
+json =
+  * `"string\"\"\" string string"`
+  * `"string\"\"\"\"\"\" string string"`
+
+
+|=== test_inline_literal_quoted
+status = valid
+bespon =
+  * `` `string string string` ``
+  * |```
+    `string
+    string string`
+    |```/
+  * |```
+    `string
+     string string`
+    |```/
+  * |```
+    `string
+      string string`
+    |```/
+  * |``````
+    ``string
+      string string``
+    |``````/
+  * |``````
+    ```string
+       string string```
+    |``````/
+  * |```
+    ``````string
+          string string``````
+    |```/
+  * |```
+    `string
+    string
+    string`
+    |```/
+  * |```
+    `string
+     string
+     string`
+    |```/
+  * |```
+    `string
+      string
+      string`
+    |```/
+json = `"string string string"`
+
+
+|=== test_invalid_quoted
+status = invalid
+bespon =
+  * |```
+     'string
+    string
+    string'
+    |```/
+  * |```
+     "string
+    string
+    string"
+    |```/
+  * |```
+     `string
+    string
+    string`
+    |```/
+  * |```
+     'string
+     string
+    string'
+    |```/
+  * |```
+     "string
+     string
+    string"
+    |```/
+  * |```
+     `string
+     string
+    string`
+    |```/
+  * |```
+     'string
+    string
+     string'
+    |```/
+  * |```
+     "string
+    string
+     string"
+    |```/
+  * |```
+     `string
+    string
+     string`
+    |```/
+  * |```
+    '''string string''' string'''
+    |```/
+  * |```
+    """string string""" string"""
+    |```/
+  * |``````
+    ```string string``` string```
+    |``````/
+
+
+|=== test_block_quoted
+status = valid
+bespon =
+  * |```
+    |'''
+    string
+    string
+    string
+    |'''/
+    |```/
+  * |```
+    |"""
+    string
+    string
+    string
+    |"""/
+    |```/
+  * |``````
+    |```
+    string
+    string
+    string
+    |```/
+    |``````/
+  * |```
+     |'''
+     string
+     string
+     string
+     |'''/
+    |```/
+  * |```
+     |"""
+     string
+     string
+     string
+     |"""/
+    |```/
+  * |``````
+     |```
+     string
+     string
+     string
+     |```/
+    |``````/
+json = `"string\nstring\nstring\n"`
+
+
+|=== test_invalid_block_quoted
+status = invalid
+bespon =
+  * |```
+     |'''
+    string
+    string
+    string
+    |'''/
+    |```/
+  * |```
+     |"""
+    string
+    string
+    string
+    |"""/
+    |```/
+  * |``````
+     |```
+    string
+    string
+    string
+    |```/
+    |``````/
+  * |```
+    |'''
+    string
+    string
+    string
+     |'''/
+    |```/
+  * |```
+    |"""
+    string
+    string
+    string
+     |"""/
+    |```/
+  * |``````
+    |```
+    string
+    string
+    string
+     |```/
+    |``````/
+  * |```
+     |'''
+     string
+    string
+     string
+     |'''/
+    |```/
+  * |```
+     |"""
+     string
+    string
+     string
+     |"""/
+    |```/
+  * |``````
+     |```
+     string
+    string
+     string
+     |```/
+    |``````/
+
+
+|=== test_basic_escapes
+status = valid
+bespon =
+  * `'string\r\n'`
+  * `"string\r\n"`
+  * |```
+    |'''
+    string\r\n\
+    |'''/
+    |```/
+  * |```
+    |"""
+    string\r\n\
+    |"""/
+    |```/
 json = `"string\r\n"`
 
 
+|=== test_escape_styles
+status = valid
+bespon = [`"\x01\u0100\u01af"`, `"\U00000001\U00000100\U000001af"`,
+          `"\u{1}\u{100}\u{1af}"`]
+json = `"\u0001\u0100\u01af"`
+
+
+|=== test_bom
+status = valid
+bespon = '\uFEFFstring'
+
+
+|=== test_invalid_code_points
+status = invalid
+bespon = ['\u0000string', '\uFEFF\uFEFFstring', 'string\r',
+          '"\uFFFE"', '"\uD800"', '"\uDFFF"']

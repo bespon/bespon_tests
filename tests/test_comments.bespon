@@ -1,0 +1,281 @@
+# Comments
+
+
+|=== test_line_comment
+status = valid
+bespon =
+  * |```
+    |=== section #comment
+    val
+    |```/
+  * |```
+    #comment
+    |=== section #comment
+    val
+    |```/
+  * |```
+    #comment
+    key = #comment
+    #comment
+     val
+    #comment
+    |```/
+  * |```
+    *  #comment
+      first
+    #comment
+    * second
+    |```/
+  * |```
+    #comment
+     {k1
+     = #comment
+     v1, k2 =
+     v2}
+    |```/
+  * |```
+    [#comment
+    #comment
+    1#comment
+    ,#comment
+    2,#comment
+    3#comment
+    ]#comment
+    |```/
+
+
+|=== test_invalid_line_comment
+status = invalid
+bespon =
+  * |```
+    {key #comment
+     = val}
+    |```/
+
+
+|=== test_inline_doc_comment
+status = valid
+bespon =
+  * |```
+    ### doc comment ###
+    val
+    |```/
+  * |```
+    #comment
+    ### doc comment ###
+    #comment
+    key = val
+    #comment
+    |```/
+  * |```
+    ### doc comment ###
+    key =
+      ### doc comment ###
+      val
+    |```/
+  * |```
+    ### doc comment ###
+    * ### doc comment ###
+      first
+    * ### doc comment ###
+      second
+    |```/
+  * |```
+    ### doc comment ###
+    {### doc comment ###
+     key =
+      ### doc comment ###
+      val}
+    |```/
+  * |```
+    ### doc comment ###
+    [  ### doc comment ###
+     first,
+     ### doc comment ###
+     second]
+    |```/
+
+
+|=== test_block_doc_comment
+status = valid
+bespon =
+  * |```
+    |###
+    doc comment
+    |###/
+    val
+    |```/
+  * |```
+    #comment
+    |###
+    doc comment
+    |###/
+    #comment
+    key = val
+    #comment
+    |```/
+  * |```
+    |###
+    doc comment
+    |###/
+    key =
+      |###
+      doc comment
+      |###/
+      val
+    |```/
+  * |```
+    |###
+    doc comment
+    |###/
+    * |###
+      doc comment
+      |###/
+      first
+    * |###
+      doc comment
+      |###/
+      second
+    |```/
+  * |```
+    |###
+    doc comment
+    |###/
+    {|###
+     doc comment
+     |###/
+     key =
+      |###
+      doc comment
+      |###/
+      val}
+    |```/
+  * |```
+    |###
+    doc comment
+    |###/
+    [  |###
+       doc comment
+       |###/
+     first,
+     |###
+     doc comment
+     |###/
+     second]
+    |```/
+
+
+|=== test_invalid_inline_doc_comment
+status = invalid
+bespon =
+  * |```
+    ### doc comment ###
+    ### doc comment ###
+    val
+    |```/
+  * |```
+    #comment
+    ### doc comment ###
+    #comment
+     key = val
+    #comment
+    |```/
+  * |```
+     ### doc comment ###
+    key =
+      ### doc comment ###
+      val
+    |```/
+  * |```
+    ### doc comment ###
+    * ### doc comment ###
+      first
+    *  ### doc comment ###
+      second
+    |```/
+  * |```
+     ### doc comment ###
+    {### doc comment ###
+     key =
+      ### doc comment ###
+      val}
+    |```/
+  * |```
+    ### doc comment ###
+     [### doc comment ###
+      first,
+      ### doc comment ###
+      second]
+    |```/
+
+
+|=== test_invalid_block_doc_comment
+status = invalid
+bespon =
+  * |```
+    |###
+    doc comment
+    |###/
+    |###
+    doc comment
+    |###/
+    val
+    |```/
+  * |```
+    #comment
+     |###
+    doc comment
+    |###/
+    #comment
+    key = val
+    #comment
+    |```/
+  * |```
+    |###
+    doc comment
+     |###/
+    key =
+      |###
+      doc comment
+      |###/
+      val
+    |```/
+  * |```
+     |###
+     doc comment
+     |###/
+    * |###
+      doc comment
+      |###/
+      first
+    * |###
+      doc comment
+      |###/
+      second
+    |```/
+  * |```
+     |###
+     doc comment
+     |###/
+    {|###
+     doc comment
+     |###/
+     key =
+      |###
+      doc comment
+      |###/
+      val}
+    |```/
+  * |```
+    |###
+    doc comment
+    |###/
+     [|###
+      doc comment
+      |###/
+      first,
+      |###
+      doc comment
+      |###/
+      second]
+    |```/

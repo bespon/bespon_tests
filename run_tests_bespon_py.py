@@ -53,18 +53,25 @@ else:
     import bespon
 
 
-json_typelist_parsers = {':int': int,
+def _int64(s, base=10):
+    n = int(s, base)
+    if not -9223372036854775808 <= n <= 9223372036854775807:
+        raise ValueError
+    return n
+
+json_typelist_parsers = {':int64': _int64,
                          ':bigint': int,
-                         ':int:2': lambda x: int(x, 2),
-                         ':int:8': lambda x: int(x, 8),
-                         ':int:16': lambda x: int(x, 16),
-                         ':float': float,
-                         ':float:16': float.fromhex}
+                         ':int64:2': lambda x: _int64(x, 2),
+                         ':int64:8': lambda x: _int64(x, 8),
+                         ':int64:16': lambda x: _int64(x, 16),
+                         ':float64': float,
+                         ':float64:16': float.fromhex,
+                         ':dict': dict}
 
 
 def find_json_untyped(obj, parent, index, unresolved):
     if isinstance(obj, dict):
-        for k, v in obj:
+        for k, v in obj.items():
             find_json_untyped(v, obj, k, unresolved)
     elif isinstance(obj, list):
         if obj and isinstance(obj[0], str) and obj[0][:1] == ':':
@@ -106,6 +113,7 @@ for fname in test_fnames:
             raw_data = [test_val['bespon']]
         else:
             raw_data = test_val['bespon']
+        subtest_count += len(raw_data)
         if test_val['status'] in 'valid':
             # All data must successfully load, and if there is json for
             # comparison, the two data sets must agree
@@ -124,6 +132,8 @@ for fname in test_fnames:
                     json_data = [json_typelist_loads(test_val['json'])]*len(raw_data)
                 else:
                     json_data = [json_typelist_loads(x) for x in test_val['json']]
+                    if len(json_data) != len(raw_data):
+                        raise ValueError('Missing json values in test "{0}" in "{1}"'.format(test_key, fname))
                 if not all(b == j or (isinstance(b, float) and math.isnan(b) and math.isnan(j)) for b, j in zip(bespon_data, json_data)):
                     failed_count += 1
                     failed_tests[fname].append(test_key)
@@ -145,6 +155,8 @@ for fname in test_fnames:
                 json_data = [json_typelist_loads(test_val['json'])]*len(raw_data)
             else:
                 json_data = [json_typelist_loads(x) for x in test_val['json']]
+                if len(json_data) != len(raw_data):
+                    raise ValueError('Missing json values in test "{0}" in "{1}"'.format(test_key, fname))
             for x, j in zip(raw_data, json_data):
                 error = False
                 try:
@@ -159,12 +171,12 @@ for fname in test_fnames:
             raise ValueError
 
 
-print('Found {0} tests in {1} files'.format(test_count, file_count))
-print('Failed tests:  {0}'.format(failed_count))
+print('Found {0} tests with {1} subtests in {2} files'.format(test_count, subtest_count, file_count))
+print('Passed:  {0}    Failed:  {1}'.format(test_count - failed_count, failed_count))
 if failed_tests:
     for fname, messages in failed_tests.items():
-        print('\nIn {0}:\n* {1}'.format(fname, ''.join(messages)))
+        print('\nIn {0}:{1}'.format(fname, ''.join('\n* {0}'.format(m) for m in messages)))
 
 
-if test_count == 0 or failed_tests:
+if test_count != 0 or failed_tests:
     sys.exit(1)

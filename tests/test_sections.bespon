@@ -1,0 +1,159 @@
+# Test key paths
+
+
+|=== test_section
+status = valid
+bespon =
+  * |```
+    |=== section.subsection
+    key = value
+    another_key = another_value
+    |```/
+  * |```
+    |=== section
+    subsection.key = value
+    subsection.another_key = another_value
+    |```/
+  * |```
+    |=== section.subsection.key
+    value
+    |=== section.subsection.another_key
+    another_value
+    |```/
+  * |```
+    |=== section.subsection.key
+    value
+    |===/
+    |=== section.subsection.another_key
+    another_value
+    |===/
+    |```/
+  * |```
+    |====== section.subsection.key
+    value
+    |======/
+    |=== section.subsection.another_key
+    another_value
+    |===/
+    |```/
+json =
+  |```
+  {"section":
+      {"subsection":
+          {"key": "value", "another_key": "another_value"}}}
+  |```/
+
+
+|=== test_list_section
+status = valid
+bespon =
+  * |```
+    |=== *
+    key = value
+    |=== *
+    another_key = another_value
+    |```/
+json = `[{"key": "value"}, {"another_key": "another_value"}]`
+
+
+|=== test_invalid_section
+status = invalid
+bespon =
+  * |```
+    |=== section .subsection
+    val
+    |```/
+  * |```
+    |=== section. subsection
+    val
+    |```/
+  * |```
+     |=== section.subsection
+    val
+    |```/
+  * |```
+     |=== section.subsection
+     val
+    |```/
+  * |```
+    \t|=== section.subsection
+    \tval
+    |```/
+  * |```
+    |=== section .subsection
+    val
+    |```/
+  * |```
+    |==== section.subsection
+    val
+    |```/
+  * |```
+    |==== section.subsection
+    val
+    |```/
+  * |```
+    |======= section.subsection
+    val
+    |```/
+  * |```
+    |=== section.subsection.key
+    value
+    |===/
+    |=== section.subsection
+    another_key = another_value
+    |===/
+    |```/
+  * |```
+    |=== section.subsection.key
+    value
+    |=== section.subsection.another_key
+    another_value
+    |===/
+    |```/
+  * |```
+    |=== section.subsection.key
+    value
+    |===/
+    |=== section.subsection.another_key
+    another_value
+    |```/
+  * |```
+    |=== inf
+    val
+    |```/
+  * |```
+    |=== +inf
+    val
+    |```/
+  * |```
+    |=== -inf
+    val
+    |```/
+  * |```
+    |=== nan
+    val
+    |```/
+  * |```
+    |=== key.inf
+    val
+    |```/
+  * |```
+    |=== key.nan
+    val
+    |```/
+  * |```
+    |=== 1.0
+    val
+    |```/
+  * |```
+    |=== 1e5
+    val
+    |```/
+  * |```
+    |=== a section
+    val
+    |```/
+  * |```
+    |=== key.subkey another_key.another_subkey
+    val
+    |```/

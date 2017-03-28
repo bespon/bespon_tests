@@ -1,0 +1,84 @@
+# Test key paths
+
+
+|=== test_key_path
+status = valid
+bespon =
+  * `key.subkey.subsubkey = val`
+  * |```
+    key.subkey.subsubkey = val1
+    key.subkey.another_subsubkey = val2
+    |```/
+  * |```
+    key.subkey.* = val1
+    key.subkey.* = val2
+    |```/
+  * |```
+    none.true.false = string
+    |```/
+json =
+  * `{"key": {"subkey": {"subsubkey": "val"}}}`
+  * `{"key": {"subkey": {"subsubkey": "val1", "another_subsubkey": "val2"}}}`
+  * `{"key": {"subkey": ["val1", "val2"]}}`
+  * |```
+    [":dict", [[null,
+         [":dict", [[true,
+             [":dict", [[false, "string"]] ] ]] ] ]] ]
+    |```/
+
+
+|=== test_invalid_key_path
+status = invalid
+bespon =
+  * |```
+    key.subkey.subsubkey = 1
+    key.subkey.subsubkey = 2
+    |```/
+  * |```
+    key .subkey1 = 1
+    key.subkey2 = 2
+    |```/
+  * |```
+    key. subkey1 = 1
+    key.subkey2 = 2
+    |```/
+  * |```
+    key.subkey = {}
+    key.subkey.another_subsubkey = val
+    |```/
+  * |```
+    key =
+        subkey.subsubkey = 1
+    key.subkey.another_subkey = 2
+    |```/
+  * |```
+    key.subkey.* = val1
+    key.* = val2
+    |```/
+  * |```
+    key.* = val1
+    key.subkey.* = val2
+    |```/
+  * |```
+    key.*.* = val1
+    |```/
+  * |```
+    *.* = val1
+    *.* = val2
+    |```/
+  * |```
+    *.key1 = val1
+    *.key2 = val2
+    |```/
+  * |```
+    key.inf = val
+    |```/
+  * |```
+    key.+inf = val
+    |```/
+  * |```
+    key.-inf = val
+    |```/
+  * |```
+    key.nan = val
+    |```/

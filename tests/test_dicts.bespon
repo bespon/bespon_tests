@@ -1,0 +1,259 @@
+# Test dicts
+
+
+|=== test_indentation_dict
+status = valid
+bespon =
+  * |```
+    key1 = value1
+    key2 = value2
+    |```/
+  * |```
+      key1 = value1
+      key2 = value2
+    |```/
+  * |'''
+    \tkey1\t=\tvalue1
+    \tkey2\t=\tvalue2
+    |'''/
+json = `{"key1": "value1", "key2": "value2"}`
+
+
+|=== test_nested_indentation_dict
+status = valid
+bespon =
+  * |```
+    key1 =
+      key2 =
+        key3 = value
+    k = v
+    |```/
+json = `{"key1": {"key2": {"key3": "value"}}, "k": "v"}`
+
+
+|=== test_inline_dict
+status = valid
+bespon =
+  * |```
+    {key1 = {key2 = {key3 = value}}, k = v}
+    |```/
+  * |```
+    {
+     key1 = {key2 = {key3 = value}}, k = v}
+    |```/
+  * |```
+    {key1 =
+    {key2 = {key3 = value}}, k = v}
+    |```/
+  * |```
+    {key1 =
+        {key2 =
+    {key3 = value}}, k = v}
+    |```/
+json = `{"key1": {"key2": {"key3": "value"}}, "k": "v"}`
+
+
+|=== test_empty_inline_dict
+status = valid
+bespon = ['{}', ' {}', '{ }', '{\t}']
+json = '{}'
+
+
+|=== test_max_nesting_depth_inline_dict
+status = valid
+bespon =
+    |```
+    {k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k=
+    {k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k=
+    {k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k=
+    {k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k=
+    {k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k=
+     v
+    }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+    }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+    |```/
+json =
+    |```
+    {"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":
+    {"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":
+    {"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":
+    {"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":
+    {"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":
+    {"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":
+    {"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":
+    {"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":
+    {"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":
+    {"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":{"k":
+     "v"
+    }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+    }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+    |```/
+
+
+|=== test_mixed_dicts
+status = valid
+bespon =
+  * |```
+    key1 =
+      key2 =
+        {key3 = value}
+    k = v
+    |```/
+  * |```
+    key1 =
+      key2 = {key3 = value}
+    k = v
+    |```/
+  * |```
+    key1 =
+      key2 = {
+      key3 = value}
+    k = v
+    |```/
+  * |```
+    key1 =
+      {key2 =
+      {key3 = value}}
+    k = v
+    |```/
+  * |```
+    key1 =
+      {key2 =
+        {key3 = value}}
+    k = v
+    |```/
+  * |```
+    key1 = {
+      key2 =
+        {key3 = value}
+    }
+    k = v
+    |```/
+  * |```
+    key1 = {
+    key2 = {key3 = value}}
+    k = v
+    |```/
+json = `{"key1": {"key2": {"key3": "value"}}, "k": "v"}`
+
+
+|=== test_invalid_indentation_dict
+status = invalid
+bespon =
+  * |```
+    key1 = val1
+     key2 = val2
+    |```/
+  * |```
+     key1 = val1
+    key2 = val2
+    |```/
+  * |```
+    key1 = val1
+    key2 =
+    |```/
+  * |```
+    key1 =
+    key2 = val2
+    |```/
+  * |```
+     key1 =
+    key2 = val2
+    |```/
+  * |```
+    key = val,
+    |```/
+  * |```
+    key
+     = val
+    |```/
+
+
+|=== test_invalid_inline_dict
+status = invalid
+bespon =
+  * |```
+     {
+    key1 = {key2 = {key3 = value}}, k = v}
+    |```/
+  * |```
+     {key1 = {key2 =
+    {key3 = value}}, k = v}
+    |```/
+  * |```
+     {key1 =
+     {key2 =
+    {key3 = value}}, k = v}
+    |```/
+  * |```
+    {'key' = 'value' = 'value'}
+    |```/
+  * |```
+    {'key' = 'value' 'key2' = 'value2'}
+    |```/
+  * |```
+    {'key' = ,'value' 'key2' = 'value2'}
+    |```/
+  * |```
+    {'key' = , 'key2' = 'value2'}
+    |```/
+  * |```
+    {k v}
+    |```/
+  * |```
+    {k = v
+    |```/
+  * |```
+    k = v}
+    |```/
+  * |```
+    {{k = v}
+    |```/
+  * |```
+    {k = v}}
+    |```/
+  * |```
+    {k1 = v1,, k2 = v2}
+    |```/
+  * |```
+    {k = v},
+    |```/
+  * |```
+    {k
+
+    = v}
+    |```/
+  * |```
+    {k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k=
+    {k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k=
+    {k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k=
+    {k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k=
+    {k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k={k=
+     {k=v}
+    }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+    }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+    |```/
+
+
+|=== test_invalid_keys
+status = invalid
+bespon =
+  * |```
+    key = val
+    key = val
+    |```/
+  * |```
+    {key = val, key = val}
+    |```/
+  * `1.0 = val`
+  * `1e5 = val`
+  * `inf = val`
+  * `+inf = val`
+  * `-inf = val`
+  * `nan = val`
+  * `0x1.0p2 = val`
+  * `[] = val`
+  * `{} = val`
+  * `key with space = value`
+  * `１ = val`
+  * `123 456 = val`

@@ -23,19 +23,19 @@ json = 'false'
 |=== test_float_positive_inf
 status = valid
 bespon = ['inf', '+inf', '+\t\x20inf']
-json = '[":float", "inf"]'
+json = '[":float64", "inf"]'
 
 
 |=== test_float_negative_inf
 status = valid
 bespon = ['-inf', '-\t\x20inf']
-json = '[":float", "-inf"]'
+json = '[":float64", "-inf"]'
 
 
 |=== test_float_nan
 status = valid
 bespon = 'nan'
-json = '[":float", "nan"]'
+json = '[":float64", "nan"]'
 
 
 |=== test_invalid_capitalization

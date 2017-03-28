@@ -1,0 +1,293 @@
+# Test lists
+
+
+|=== test_single_level_indentation_list
+status = valid
+bespon =
+  * |```
+    *string
+    *string string string
+    *string string string string
+    |```/
+  * |```
+      * string
+      * string string string
+      * string string string string
+    |```/
+  * |'''
+    *\tstring
+    *\tstring string string
+    *\tstring string string string
+    |'''/
+  * |'''
+    \t*\tstring
+    \t*\tstring string string
+    \t*\tstring string string string
+    |'''/
+  * |'''
+    *\tstring
+    *\t"string
+    \tstring string"
+    *\t"string
+    \t\tstring string
+    \t\tstring"
+    |'''/
+  * |'''
+    \t*\tstring
+    \t*\t"string
+    \t\tstring string"
+    \t*\t"string
+    \t\t\tstring string
+    \t\t\tstring"
+    |'''/
+json = `["string", "string string string", "string string string string"]`
+
+
+|=== test_nested_indentation_list
+status = valid
+bespon =
+  * |```
+    * first
+    *
+      * second
+      * third
+      *
+        * fourth
+        * fifth
+    |```/
+json = `["first", ["second", "third", ["fourth", "fifth"]]]`
+
+
+|=== test_inline_list
+status = valid
+bespon =
+  * |```
+    [first, [second, third, [fourth, fifth]]]
+    |```/
+  * |```
+    [
+     first, [second, third, [fourth, fifth]]]
+    |```/
+  * |```
+    [first,
+     [second, third,
+     [fourth, fifth]]]
+    |```/
+  * |```
+    [first,
+      [second, third,
+    [fourth, fifth]]]
+    |```/
+json = `["first", ["second", "third", ["fourth", "fifth"]]]`
+
+
+|=== test_empty_inline_list
+status = valid
+bespon = ['[]', ' []', '[ ]', '[\t]']
+json = '[]'
+
+
+|=== test_max_nesting_depth_inline_list
+status = valid
+bespon =
+    |```
+    [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
+    [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
+    "1"
+    ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+    ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+    |```/
+json =
+    |```
+    [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
+    [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
+    "1"
+    ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+    ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+    |```/
+
+
+|=== test_mixed_lists
+status = valid
+bespon =
+  * |```
+    * first
+    *
+      * second
+      * third
+      *
+        [fourth, fifth]
+    |```/
+  * |```
+    * first
+    *
+      * second
+      * third
+      *
+        [fourth,
+        fifth]
+    |```/
+  * |```
+    * first
+    *
+      * second
+      * third
+      *
+        [fourth,
+         fifth]
+    |```/
+  * |```
+    * first
+    *
+      * second
+      * third
+      *
+        [fourth,
+            fifth]
+    |```/
+  * |```
+    * first
+    * [second, third,
+       [fourth, fifth]]
+    |```/
+  * |```
+    * first
+    * [second,
+       third,
+       [fourth,
+        fifth]]
+    |```/
+  * |```
+    * first
+    * [second,
+      third,
+      [fourth,
+       fifth]]
+    |```/
+json = `["first", ["second", "third", ["fourth", "fifth"]]]`
+
+
+|=== test_mixed_data
+status = valid
+bespon =
+  * |```
+    key =
+     * val
+    |```/
+json =
+  * |```
+    {"key": ["val"]}
+    |```/
+
+
+|=== test_invalid_indentation_list
+status = invalid
+bespon =
+  * |```
+    *\t\x20
+    |```/
+  * |```
+    * first
+    *  second
+    |```/
+  * |```
+    *  first
+    * second
+    |```/
+  * |```
+    *  first
+     * second
+    |```/
+  * |```
+     * first
+    *  second
+    |```/
+  * |```
+    * first
+    *\x20
+    |```/
+  * |```
+    *\x20
+    * second
+    |```/
+  * |```
+    \t*\tfirst
+    \t*\x20\x20\x20\x20second
+    |```/
+  * |```
+    \t*\tfirst
+    \t*\x20\x20\x20\x20\x20\x20\x20\x20second
+    |```/
+  * |```
+    \t*\tfirst
+    \x20\x20\x20\x20*\tsecond
+    |```/
+  * |```
+    \t*\tfirst
+    \x20\x20\x20\x20\x20\x20\x20\x20*\tsecond
+    |```/
+  * |```
+    * first
+    * second,
+    |```/
+
+
+|=== test_invalid_inline_list
+status = invalid
+bespon =
+  * |```
+     [first, [second, third, [fourth, fifth]]
+    ]
+    |```/
+  * |```
+     [first,
+    [second, third, [fourth, fifth]]]
+    |```/
+  * |```
+     [first,
+     [second, third,
+    [fourth, fifth]]]
+    |```/
+  * |```
+    [1 2]
+    |```/
+  * |```
+    [1,,2]
+    |```/
+  * |```
+    [1 2
+    |```/
+  * |```
+    1]
+    |```/
+  * |```
+    [[1, 2]
+    |```/
+  * |```
+    [1, 2]]
+    |```/
+  * |```
+    [1, 2][]
+    |```/
+  * |```
+    [1, 2],
+    |```/
+  * |```
+    [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
+    [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
+    ["1"]
+    ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+    ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+    |```/
+
+
+|=== test_invalid_mixed_data
+status = invalid
+bespon =
+  * |```
+    key = * val
+    |```/
+  * |```
+    key =
+    * val
+    |```/
