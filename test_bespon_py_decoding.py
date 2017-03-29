@@ -74,10 +74,10 @@ JSON_TYPELIST_PARSERS = {':int64': _int64,
 def find_json_untyped(obj, parent, index, unresolved):
     '''
     Within loaded data, recursively find all lists of the form
-        [":<type>", <object>]
+        [":<type>", <data>]
     and add information about them to a list `unresolved`.  This list will
     then be used to replace all such lists, starting at the deepest nesting
-    level and working out, with the result of applying `<type>` to `<object>`.
+    level and working out, with the result of applying `<type>` to `<data>`.
     This provides a way to convert data loaded in JSON format into data
     structures that JSON itself does not support.
     '''
@@ -98,16 +98,16 @@ def find_json_untyped(obj, parent, index, unresolved):
 def json_typelist_loads(s):
     '''
     Load a string as JSON data, and process all lists of the form
-        [":<type>", <object>]
-    by applying `<type>` to `<object>`.  This provides a way to convert data
+        [":<type>", <data>]
+    by applying `<type>` to `<data>`.  This provides a way to convert data
     loaded in JSON format into data structures that JSON itself does not
     support.
     '''
-    json_data = json.loads(s)
+    raw_json_data = json.loads(s)
     # In case top level isn't a list or dict, provide a wrapper
-    json_wrapped = [json_data]
+    json_wrapped = [raw_json_data]
     unresolved = []
-    find_json_untyped(json_data, json_wrapped, 0, unresolved)
+    find_json_untyped(raw_json_data, json_wrapped, 0, unresolved)
     if unresolved:
         # Work from deepest nesting level outward; hence `reversed()`
         for typename, obj, parent, index in reversed(unresolved):
@@ -137,8 +137,7 @@ for fname in test_fnames:
             raw_data = test_val['bespon']
         subtest_count += len(raw_data)
         if test_val['status'] in 'valid':
-            # All data must successfully load, and if there is json for
-            # comparison, the two data sets must agree
+            # All data must successfully load
             error = False
             try:
                 bespon_data = [bespon.loads(x) for x in raw_data]
@@ -149,7 +148,7 @@ for fname in test_fnames:
                     failed_tests[fname].append('{0}\n    {1}'.format(test_key, e))
                 else:
                     failed_tests[fname].append(test_key)
-            if not error and 'json' in test_val:
+            if not error:
                 if isinstance(test_val['json'], str):
                     json_data = [json_typelist_loads(test_val['json'])]*len(raw_data)
                 else:
@@ -158,7 +157,17 @@ for fname in test_fnames:
                         raise ValueError('Missing json values in test "{0}" in "{1}"'.format(test_key, fname))
                 if not all(b == j or (isinstance(b, float) and math.isnan(b) and math.isnan(j)) for b, j in zip(bespon_data, json_data)):
                     failed_count += 1
-                    failed_tests[fname].append(test_key)
+                    if len(bespon_data) == 1:
+                        failed_tests[fname].append(test_key)
+                    else:
+                        failed_subtest_numbers = []
+                        for n, (b, j) in enumerate(zip(bespon_data, json_data)):
+                            if b != j and not (isinstance(b, float) and math.isnan(b) and math.isnan(j)):
+                                failed_subtest_numbers.append(n+1)
+                        if len(failed_subtest_numbers) == 1:
+                            failed_tests[fname].append(test_key + ' (subtest {0})'.format(', '.join(str(x) for x in failed_subtest_numbers)))
+                        else:
+                            failed_tests[fname].append(test_key + ' (subtests {0})'.format(', '.join(str(x) for x in failed_subtest_numbers)))
         elif test_val['status'] == 'invalid':
             # All data must fail to load
             error_count = 0

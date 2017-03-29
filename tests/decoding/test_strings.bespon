@@ -393,6 +393,7 @@ json = `"\u0001\u0100\u01af"`
 |=== test_bom
 status = valid
 bespon = '\uFEFFstring'
+json = '"string"'
 
 
 |=== test_invalid_code_points

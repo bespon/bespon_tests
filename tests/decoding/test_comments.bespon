@@ -46,6 +46,13 @@ bespon =
     3#comment
     ]#comment
     |```/
+json =
+  * `{"section": "val"}`
+  * `{"section": "val"}`
+  * `{"key": "val"}`
+  * `["first", "second"]`
+  * `{"k1": "v1", "k2": "v2"}`
+  * `[[":int64", "1"], [":int64", "2"], [":int64", "3"]]`
 
 
 |=== test_invalid_line_comment
@@ -55,6 +62,8 @@ bespon =
     {key #comment
      = val}
     |```/
+json =
+  * `{"key": "val"}`
 
 
 |=== test_inline_doc_comment
@@ -98,6 +107,13 @@ bespon =
      ### doc comment ###
      second]
     |```/
+json =
+  * `"val"`
+  * `{"key": "val"}`
+  * `{"key": "val"}`
+  * `["first", "second"]`
+  * `{"key": "val"}`
+  * `["first", "second"]`
 
 
 |=== test_block_doc_comment
@@ -167,6 +183,13 @@ bespon =
      |###/
      second]
     |```/
+json =
+  * `"val"`
+  * `{"key": "val"}`
+  * `{"key": "val"}`
+  * `["first", "second"]`
+  * `{"key": "val"}`
+  * `["first", "second"]`
 
 
 |=== test_invalid_inline_doc_comment

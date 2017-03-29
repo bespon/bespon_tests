@@ -24,7 +24,6 @@ json = '"string"'
 ```
 In this case, the test is called `test_keylike`.  The test data itself
 is in the form of a dict.  Since `status` is `valid`, all of the data
-provided in this test must load correctly.  `bespon` provides either a single
 string of BespON data, or a list of BespON data as in this case.  `json`
 provides equivalent data in JSON form, to allow the loaded BespON data to
 be validated.  If `json` is a string, as in this case, then all data provided
@@ -34,12 +33,6 @@ in the corresponding index in `bespon`.  Most tests only provide a single
 `json` string for comparison, but this functionality is convenient for
 testing things like numbers without greatly increasing the overall number of
 tests.
-
-The `json` values are omitted entirely in one file, `test_basic.bespon`.
-This is intended to serve as a quick check of whether various syntactical
-structures can be loaded, without requiring the additional processing of
-comparison against JSON data.  It may be useful in the early stages of
-writing a decoder.
 
 Tests may have `status = invalid` instead.  In this case, `json` values are
 omitted, and all data in `bespon` must fail to load.  Invalid data should be
@@ -62,11 +55,14 @@ for dict keys.  When types that are not directly supported by JSON are
 required, type information is represented in JSON using a two-element list
 of the form
 ```text
-[":<type>", <object>]
+[":<type>", <data>]
 ```
+`<data>` may be a literal dict or list.  Other types should be represented
+as strings to which typing will be applied.
+
 After the data in the `json` part of a test is loaded, it is searched
 recursively for lists of this form, and they are replaced by applying typing
-`<type>` to objects `<object>`.  Currently, the following types are provided
+`<type>` to objects `<data>`.  Currently, the following types are provided
 using this approach:
 
   * `:int64` – 64-bit integer
@@ -86,6 +82,10 @@ using this approach:
 Currently, encoding tests are limited to loading the valid decoding tests,
 encoding them, and then decoding to make sure that the results match.
 Additional, more targeted encoding tests may be added in the future.
+
+This encoding check may be run against the
+[`bespon` package for Python](https:/github.com/bespon/bespon_py) using the
+included script `test_bespon_py_roundtrip_encoding.py`.
 
 
 ## License
