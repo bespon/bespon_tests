@@ -124,6 +124,8 @@ failed_tests = collections.defaultdict(list)
 failed_count = 0
 
 for fname in test_fnames:
+    if args.basic and fname != 'test_basic.bespon':
+        continue
     file_count += 1
     with open(os.path.join(test_dir, fname), encoding='utf8') as f:
         data = bespon.load(f)
