@@ -19,6 +19,7 @@ import sys
 import os
 import argparse
 import collections
+import math
 if sys.version_info.major == 2:
     from io import open
     str = unicode
@@ -68,28 +69,38 @@ for fname in test_fnames:
         else:
             raw_data = test_val['bespon']
         subtest_count += len(raw_data)
-        if test_val['status'] in 'valid':
+        if test_val['status'] == 'valid':
             # All data must successfully load
             try:
                 bespon_data = [bespon.loads(x) for x in raw_data]
             except Exception as e:
                 raise Exception('Invalid data (run decoding tests before trying encoding tests again):\n  {0}'.format(e))
             error = False
-            for b in bespon_data:
+            for n, b in enumerate(bespon_data):
                 try:
                     encoded = bespon.dumps(b)
                 except Exception as e:
                     error = True
+                    subtest_number = n + 1
                     break
                 if not error:
                     try:
-                        bespon.loads(encoded)
+                        b_roundtripped = bespon.loads(encoded)
                     except Exception as e:
                         error = True
+                        subtest_number = n + 1
+                        break
+                if not error:
+                    if b != b_roundtripped and not (isinstance(b, float) and ((math.isnan(b) and math.isnan(b_roundtripped)) or (float(str(b)) == b_roundtripped))):
+                        error = True
+                        subtest_number = n + 1
                         break
             if error:
                 failed_count += 1
-                failed_tests[fname].append(test_key)
+                if len(bespon_data) == 1:
+                    failed_tests[fname].append(test_key)
+                else:
+                    failed_tests[fname].append(test_key + ' (subtest {0})'.format(subtest_number))
 
 
 print('Found {0} tests with {1} subtests in {2} files'.format(test_count, subtest_count, file_count))

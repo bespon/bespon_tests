@@ -136,7 +136,7 @@ for fname in test_fnames:
         else:
             raw_data = test_val['bespon']
         subtest_count += len(raw_data)
-        if test_val['status'] in 'valid':
+        if test_val['status'] == 'valid':
             # All data must successfully load
             error = False
             try:
