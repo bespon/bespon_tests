@@ -9,7 +9,7 @@ is on decoders.
 ## Decoding tests
 
 Decoding tests in `tests/decoding` may be run against the
-[`bespon` package for Python](https:/github.com/bespon/bespon_py) using the
+[`bespon` package for Python](https://github.com/bespon/bespon_py) using the
 included script `test_bespon_py_decoding.py`.  Future implementations in
 other languages may use this as a template for working with decoding tests.
 
@@ -84,7 +84,7 @@ encoding them, and then decoding to make sure that the results match.
 Additional, more targeted encoding tests may be added in the future.
 
 This encoding check may be run against the
-[`bespon` package for Python](https:/github.com/bespon/bespon_py) using the
+[`bespon` package for Python](https://github.com/bespon/bespon_py) using the
 included script `test_bespon_py_roundtrip_encoding.py`.
 
 
