@@ -10,23 +10,23 @@ status = valid
 bespon =
   * |```
     *string
-    *string string string
-    *string string string string
+    *'string string string'
+    *'string string string string'
     |```/
   * |```
       * string
-      * string string string
-      * string string string string
+      * 'string string string'
+      * 'string string string string'
     |```/
   * |'''
     *\tstring
-    *\tstring string string
-    *\tstring string string string
+    *\t'string string string'
+    *\t'string string string string'
     |'''/
   * |'''
     \t*\tstring
-    \t*\tstring string string
-    \t*\tstring string string string
+    \t*\t'string string string'
+    \t*\t'string string string string'
     |'''/
   * |'''
     *\tstring

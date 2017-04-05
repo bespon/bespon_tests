@@ -11,17 +11,11 @@ bespon = ['string', "'string'", '"string"', '`string`']
 json = '"string"'
 
 
-|=== test_unquoted
-status = valid
-bespon = ['string string string']
-json = '"string string string"'
-
-
 |=== test_invalid_unquoted
 status = invalid
 bespon =
-  * `string\x20\x20string`
-  * `string \uFFFFstring`
+  * `string\x20string`
+  * `string\uFFFFstring`
   * |```
     string
      string

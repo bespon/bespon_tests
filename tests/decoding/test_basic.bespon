@@ -16,7 +16,7 @@ bespon = ['none', 'true', 'false',
           '1.0', '1e5', '1.1e1',
           'inf', '+inf', '-inf',
           'nan', '0xa.fp2',
-          'string', 'string string',
+          'string',
           "'string'", "'string\nstring'",
           '"string"', '"string\nstring"',
           '`string`', '`string\nstring`',
@@ -29,7 +29,7 @@ json =   ['null', 'true', 'false',
           `[":float64", "1.0"]`, `[":float64", "1e5"]`, `[":float64", "1.1e1"]`,
           `[":float64", "inf"]`, `[":float64", "+inf"]`, `[":float64", "-inf"]`,
           `[":float64", "nan"]`, `[":float64:16", "0xa.fp2"]`,
-          '"string"', '"string string"',
+          '"string"',
           '"string"', `"string string"`,
           '"string"', `"string string"`,
           '"string"', `"string string"`,
@@ -38,7 +38,7 @@ json =   ['null', 'true', 'false',
           `"string\n"`]
 
 
-|=== test_root_noninline_dict
+|=== test_root_indentation_dict
 status = valid
 bespon = |'''
          key = value
@@ -56,11 +56,11 @@ bespon = |'''
 json = `{"key": "value", "another_key": "another_value"}`
 
 
-|=== test_root_noninline_list
+|=== test_root_indentation_list
 status = valid
 bespon = |'''
          * value
-         * another value
+         * 'another value'
          |'''/
 json = `["value", "another value"]`
 
@@ -69,7 +69,7 @@ json = `["value", "another value"]`
 status = valid
 bespon = |'''
          [value,
-          another value]
+          'another value']
          |'''/
 json = `["value", "another value"]`
 
