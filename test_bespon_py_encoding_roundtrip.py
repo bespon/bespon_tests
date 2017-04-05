@@ -44,7 +44,7 @@ else:
 if args.bespon_py is None:
     import bespon
 else:
-    sys.path.insert(0, os.path.abspath(os.path.expanduser(os.path.expandvars(args.bespon_py))))
+    sys.path.insert(1, os.path.abspath(os.path.expanduser(os.path.expandvars(args.bespon_py))))
     import bespon
 
 
