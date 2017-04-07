@@ -85,7 +85,7 @@ Additional, more targeted encoding tests may be added in the future.
 
 This encoding check may be run against the
 [`bespon` package for Python](https://github.com/gpoore/bespon_py) using the
-included script `test_bespon_py_roundtrip_encoding.py`.
+included script `test_bespon_py_encoding_roundtrip.py`.
 
 
 ## License
