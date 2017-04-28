@@ -234,6 +234,15 @@ bespon =
     * first
     * second,
     |```/
+  * |```
+    ** a
+    |```/
+  * |```
+    * * a
+    |```/
+  * |```
+    k = * v
+    |```/
 
 
 |=== test_invalid_inline_list
