@@ -86,3 +86,6 @@ bespon =
   * |```
     key.nan = val
     |```/
+  * |```
+    key = a.b
+    |```/
