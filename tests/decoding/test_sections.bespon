@@ -60,6 +60,17 @@ bespon =
 json = `[{"key": "value"}, {"another_key": "another_value"}]`
 
 
+|=== test_string_section
+status = valid
+bespon =
+  * |```
+    |=== '*'
+    key = value
+    |```/
+json =
+  * `{"*": {"key": "value"}}`
+
+
 |=== test_invalid_section
 status = invalid
 bespon =

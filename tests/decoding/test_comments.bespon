@@ -62,8 +62,6 @@ bespon =
     {key #comment
      = val}
     |```/
-json =
-  * `{"key": "val"}`
 
 
 |=== test_inline_doc_comment

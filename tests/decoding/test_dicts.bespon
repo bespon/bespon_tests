@@ -20,6 +20,14 @@ bespon =
     \tkey1\t=\tvalue1
     \tkey2\t=\tvalue2
     |'''/
+  * |```
+    |"""
+    key1\
+    |"""/ = |"""
+            value1\
+            |"""/
+    """key2""" = """value2"""
+    |```/
 json = `{"key1": "value1", "key2": "value2"}`
 
 
