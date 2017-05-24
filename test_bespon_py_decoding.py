@@ -66,6 +66,8 @@ JSON_TYPELIST_PARSERS = {':int64': _int64,
                          ':int64:16': lambda x: _int64(x, 16),
                          ':float64': float,
                          ':float64:16': float.fromhex,
+                         ':bytes': lambda x: x.encode('ascii'),
+                         ':utf8': lambda x: x.encode('utf8'),
                          # Dict is needed to provide mappings with non-string
                          # keys (none, bool, int)
                          ':dict': dict}
@@ -144,10 +146,19 @@ for fname in test_fnames:
             except Exception as e:
                 error = True
                 failed_count += 1
+                failed_subtest_numbers = []
+                for n, x in enumerate(raw_data):
+                    try:
+                        bespon.loads(x)
+                    except Exception as e:
+                        failed_subtest_numbers.append(n+1)
                 if args.verbose:
-                    failed_tests[fname].append('{0}\n    {1}'.format(test_key, e))
+                    failed_tests[fname].append('{0} (subtest {1})\n    {2}'.format(test_key, failed_subtest_numbers[0], e))
                 else:
-                    failed_tests[fname].append(test_key)
+                    if len(failed_subtest_numbers) == 1:
+                        failed_tests[fname].append(test_key + ' (subtest {0})'.format(', '.join(str(x) for x in failed_subtest_numbers)))
+                    else:
+                        failed_tests[fname].append(test_key + ' (subtests {0})'.format(', '.join(str(x) for x in failed_subtest_numbers)))
             if not error:
                 if isinstance(test_val['json'], str):
                     json_data = [json_typelist_loads(test_val['json'])]*len(raw_data)

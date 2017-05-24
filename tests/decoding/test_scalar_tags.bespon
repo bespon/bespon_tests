@@ -1,0 +1,420 @@
+# Copyright (c) 2017, Geoffrey M. Poore
+# License:  Creative Commons Attribution 4.0 International Public License
+#           https://creativecommons.org/licenses/by/4.0/legalcode
+#
+# Tags
+
+
+|=== test_scalar_tags_general
+status = valid
+bespon =
+  * |``````
+    (bytes)> 'abc'
+    |``````/
+  * |``````
+    [
+    (
+    bytes
+    )>
+    'abc'
+    ]
+    |``````/
+  * |``````
+    [
+        (
+    bytes
+        )>
+    'abc'
+    ]
+    |``````/
+json =
+  * `[":bytes", "abc"]`
+  * `[[":bytes", "abc"]]`
+  * `[[":bytes", "abc"]]`
+
+
+|=== test_invalid_scalar_tags_general
+status = invalid
+bespon =
+  * |``````
+    (unknown)> 'abc'
+    |``````/
+  * |``````
+     (bytes)>
+    'abc'
+    |``````/
+  * |``````
+     (
+    unknown)> 'abc'
+    |``````/
+  * |``````
+     (unknown
+    )> 'abc'
+    |``````/
+  * |``````
+    'abc'
+    (bytes)>
+    |``````/
+
+
+|=== test_scalar_tags_newlines
+status = valid
+bespon =
+  * |``````
+    (newline='\n')>
+    |```
+    text
+    |```/
+    |``````/
+  * |``````
+    (newline='\v')>
+    |```
+    text
+    |```/
+    |``````/
+  * |``````
+    (newline='\f')>
+    |```
+    text
+    |```/
+    |``````/
+  * |``````
+    (newline='\r')>
+    |```
+    text
+    |```/
+    |``````/
+  * |``````
+    (newline='\r\n')>
+    |```
+    text
+    |```/
+    |``````/
+  * |``````
+    (newline='\u2028')>
+    |```
+    text
+    |```/
+    |``````/
+  * |``````
+    (newline='\u2029')>
+    |```
+    text
+    |```/
+    |``````/
+  * |``````
+    (newline='')>
+    |```
+    text
+    |```/
+    |``````/
+  * |``````
+    (newline='')>
+    |'''
+    tex\x74
+    |'''/
+    |``````/
+  * |``````
+    (newline='')>
+    |"""
+    tex\x74
+    |"""/
+    |``````/
+json =
+  * `"text\n"`
+  * `"text\u000b"`
+  * `"text\u000c"`
+  * `"text\r"`
+  * `"text\r\n"`
+  * `"text\u2028"`
+  * `"text\u2029"`
+  * `"text"`
+  * `"text"`
+  * `"text"`
+
+
+|=== test_invalid_scalar_tags_newlines
+status = invalid
+bespon =
+  * |``````
+    (newline='a')>
+    |```
+    text
+    |```/
+    |``````/
+  * ```(newline='')> `text` ```
+  * ```(newline='')> 'text' ```
+  * ```(newline='')> "text" ```
+
+
+|=== test_scalar_tags_indent
+status = valid
+bespon =
+  * |``````
+    (indent=' ')>
+    |```
+    text
+    |```/
+    |``````/
+  * |``````
+    (indent='\t')>
+    |```
+    text
+    |```/
+    |``````/
+  * |``````
+    (indent=' \t \t')>
+    |```
+    text
+    |```/
+    |``````/
+  * |``````
+    (indent=' \t \t')>
+    |'''
+    tex\x74
+    |'''/
+    |``````/
+  * |``````
+    (indent=' \t \t')>
+    |"""
+    tex\x74
+    |"""/
+    |``````/
+json =
+  * `" text\n"`
+  * `"\ttext\n"`
+  * `" \t \ttext\n"`
+  * `" \t \ttext\n"`
+  * `" \t \ttext\n"`
+
+
+|=== test_invalid_scalar_tags_indent
+status = invalid
+bespon =
+  * |``````
+    (indent='a')>
+    |```
+    text
+    |```/
+    |``````/
+  * ```(indent=' ')> `text` ```
+  * ```(indent=' ')> 'text' ```
+  * ```(indent=' ')> "text" ```
+
+
+|=== test_scalar_tags_bytes
+status = valid
+bespon =
+  * |``````
+    (bytes)>
+    |```
+    text
+    |```/
+    |``````/
+  * |``````
+    (bytes)>
+    |'''
+    tex\x74
+    |'''/
+    |``````/
+  * |``````
+    (bytes)>
+    |"""
+    tex\x74
+    |"""/
+    |``````/
+  * |``````
+    (bytes, indent=' \t', newline='\r\n')>
+    |```
+    text
+    |```/
+    |``````/
+  * |``````
+    (bytes, indent=' \t', newline='\r\n')>
+    |'''
+    tex\x74
+    |'''/
+    |``````/
+  * |``````
+    (bytes, indent=' \t', newline='\r\n')>
+    |"""
+    tex\x74
+    |"""/
+    |``````/
+  * ```(bytes)> `text` ```
+  * ```(bytes)> 'tex\x74' ```
+  * ```(bytes)> "tex\x74" ```
+json =
+  * `[":bytes", "text\n"]`
+  * `[":bytes", "text\n"]`
+  * `[":bytes", "text\n"]`
+  * `[":bytes", " \ttext\r\n"]`
+  * `[":bytes", " \ttext\r\n"]`
+  * `[":bytes", " \ttext\r\n"]`
+  * `[":bytes", "text"]`
+  * `[":bytes", "text"]`
+  * `[":bytes", "text"]`
+
+
+|=== test_invalid_scalar_tags_bytes
+status = invalid
+bespon =
+  * |``````
+    (bytes, newline='')> `text`
+    |``````/
+  * |``````
+    (bytes, indent=' ')> `text`
+    |``````/
+  * |``````
+    (bytes, newline='\u2028')>
+    |```
+    text
+    |```/
+    |``````/
+  * `(bytes)> '\u0074'`
+  * `(bytes)> '\u{74}'`
+  * `(bytes)> '\U00000074'`
+
+
+|=== test_scalar_tags_base16
+status = valid
+bespon =
+  * |``````
+    (base16)> '7465787420C3BF'
+    |``````/
+  * |``````
+    (base16)> '\x37465787420C3BF'
+    |``````/
+  * |``````
+    (base16)> |'''
+              7465787420C3BF
+              |'''/
+    |``````/
+  * |``````
+    (base16)> |'''
+              7465787420C3BF
+              \
+              |'''/
+    |``````/
+  * |``````
+    (base16)> |'''
+              7465787420C3BF
+              \
+              \
+              |'''/
+    |``````/
+json = `[":utf8", "text ÿ"]`
+
+
+|=== test_invalid_scalar_tags_base16
+status = invalid
+bespon =
+  * |``````
+    (base16)> ' 7465787420C3BF'
+    |``````/
+  * |``````
+    (base16)> '7465787420C3BF '
+    |``````/
+  * |``````
+    (base16)> '7465787420C3BF
+              '
+    |``````/
+  * |``````
+    (base16)> |'''
+               7465787420C3BF
+              |'''/
+    |``````/
+  * |``````
+    (base16)> |'''
+              7465787420C3BF
+
+              |'''/
+    |``````/
+  * |``````
+    (base16)> |'''
+              7465787420C3BF
+              \
+               \
+              |'''/
+    |``````/
+  * |``````
+    (base16)> '\u0037465787420C3BF'
+    |``````/
+  * |``````
+    (base16)> '\u{37}465787420C3BF'
+    |``````/
+  * |``````
+    (base16)> '\U00000037465787420C3BF'
+    |``````/
+
+
+|=== text_scalar_tags_base64
+status = valid
+bespon =
+  * |``````
+    (base64)> 'dGV4dCDDvw=='
+    |``````/
+  * |``````
+    (base64)> '\x64GV4dCDDvw=='
+    |``````/
+  * |``````
+    (base64)> |'''
+              dGV4dCDDvw==
+              |'''/
+    |``````/
+  * |``````
+    (base64)> |'''
+              dGV4dCDDvw==
+              \
+              |'''/
+    |``````/
+  * |``````
+    (base64)> |'''
+              dGV4dCDDvw==
+              \
+              \
+              |'''/
+    |``````/
+json = `[":utf8", "text ÿ"]`
+
+
+|=== test_invalid_scalar_tags_base64
+status = invalid
+bespon =
+  * |``````
+    (base64)> ' dGV4dCDDvw=='
+    |``````/
+  * |``````
+    (base64)> 'dGV4dCDDvw== '
+    |``````/
+  * |``````
+    (base64)> 'dGV4dCDDvw==
+              '
+    |``````/
+  * |``````
+    (base64)> |'''
+               dGV4dCDDvw==
+              |'''/
+    |``````/
+  * |``````
+    (base64)> |'''
+              dGV4dCDDvw==
+
+              |'''/
+    |``````/
+  * |``````
+    (base64)> |'''
+              dGV4dCDDvw==
+              \
+               \
+              |'''/
+    |``````/
+  * |``````
+    (base64)> '\u0064GV4dCDDvw=='
+    |``````/
+  * |``````
+    (base64)> '\u{64}GV4dCDDvw=='
+    |``````/
+  * |``````
+    (base64)> '\U00000064GV4dCDDvw=='
+    |``````/
