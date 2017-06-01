@@ -224,6 +224,18 @@ bespon =
     |"""/
     |``````/
   * |``````
+    (bytes)> `text`
+    |``````/
+  * |``````
+    (bytes)> 'text'
+    |``````/
+  * |``````
+    (bytes)> "text"
+    |``````/
+  * |``````
+    (bytes)> "text"
+    |``````/
+  * |``````
     (bytes, indent=' \t', newline='\r\n')>
     |```
     text
@@ -248,6 +260,10 @@ json =
   * `[":bytes", "text\n"]`
   * `[":bytes", "text\n"]`
   * `[":bytes", "text\n"]`
+  * `[":bytes", "text"]`
+  * `[":bytes", "text"]`
+  * `[":bytes", "text"]`
+  * `[":bytes", "text"]`
   * `[":bytes", " \ttext\r\n"]`
   * `[":bytes", " \ttext\r\n"]`
   * `[":bytes", " \ttext\r\n"]`
@@ -283,6 +299,9 @@ bespon =
     (base16)> '7465787420C3BF'
     |``````/
   * |``````
+    (base16)> '74 65 78 74 20 C3 BF'
+    |``````/
+  * |``````
     (base16)> '\x37465787420C3BF'
     |``````/
   * |``````
@@ -309,6 +328,12 @@ json = `[":utf8", "text ÿ"]`
 |=== test_invalid_scalar_tags_base16
 status = invalid
 bespon =
+  * |``````
+    (base16)> '74 65787420C3BF'
+    |``````/
+  * |``````
+    (base16)> '7 4 6 5 7 8 7 4 2 0 C 3 B F'
+    |``````/
   * |``````
     (base16)> ' 7465787420C3BF'
     |``````/
@@ -381,6 +406,12 @@ json = `[":utf8", "text ÿ"]`
 |=== test_invalid_scalar_tags_base64
 status = invalid
 bespon =
+  * |``````
+    (base64)> 'd GV4dCDDvw=='
+    |``````/
+  * |``````
+    (base64)> 'dGV4dCDDvw= ='
+    |``````/
   * |``````
     (base64)> ' dGV4dCDDvw=='
     |``````/
