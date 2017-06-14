@@ -2,7 +2,7 @@
 # License:  Creative Commons Attribution 4.0 International Public License
 #           https://creativecommons.org/licenses/by/4.0/legalcode
 #
-# Tags
+# Tags on scalars
 
 
 |=== test_scalar_tags_general
@@ -57,7 +57,7 @@ bespon =
     |``````/
 
 
-|=== test_scalar_tags_newlines
+|=== test_scalar_tags_newline
 status = valid
 bespon =
   * |``````
@@ -133,11 +133,17 @@ json =
   * `"text"`
 
 
-|=== test_invalid_scalar_tags_newlines
+|=== test_invalid_scalar_tags_newline
 status = invalid
 bespon =
   * |``````
     (newline='a')>
+    |```
+    text
+    |```/
+    |``````/
+  * |``````
+    ('newline'='\n')>
     |```
     text
     |```/
@@ -197,9 +203,117 @@ bespon =
     text
     |```/
     |``````/
+  * |``````
+    ('indent'='\n')>
+    |```
+    text
+    |```/
+    |``````/
   * ```(indent=' ')> `text` ```
   * ```(indent=' ')> 'text' ```
   * ```(indent=' ')> "text" ```
+
+
+|=== test_scalar_tags_indent_newline
+status = valid
+bespon =
+  * |``````
+    (indent='\t', newline='\r\n')>
+    |```
+     line1\
+    |```/
+    |``````/
+  * |``````
+    (indent='\t', newline='\r\n')>
+    |'''
+     line1\
+    |'''/
+    |``````/
+  * |``````
+    (indent='\t', newline='\r\n')>
+    |"""
+     line1\
+    |"""/
+    |``````/
+  * |``````
+    (indent='\t', newline='\r\n')>
+    |```
+     line1\
+     line2
+    |```/
+    |``````/
+  * |``````
+    (indent='\t', newline='\r\n')>
+    |'''
+     line1\
+     line2
+    |'''/
+    |``````/
+  * |``````
+    (indent='\t', newline='\r\n')>
+    |"""
+     line1\
+     line2
+    |"""/
+    |``````/
+  * |``````
+    (indent='\t', newline='\r\n')>
+    |```
+     line1\
+     line2\
+    |```/
+    |``````/
+  * |``````
+    (indent='\t', newline='\r\n')>
+    |'''
+     line1\
+     line2\
+    |'''/
+    |``````/
+  * |``````
+    (indent='\t', newline='\r\n')>
+    |"""
+     line1\
+     line2\
+    |"""/
+    |``````/
+  * |``````
+    (indent='\t', newline='\r\n')>
+    |```
+     line1
+     line2\
+     line3\
+    |```/
+    |``````/
+  * |``````
+    (indent='\t', newline='\r\n')>
+    |'''
+     line1
+     line2\
+     line3\
+    |'''/
+    |``````/
+  * |``````
+    (indent='\t', newline='\r\n')>
+    |"""
+     line1
+     line2\
+     line3\
+    |"""/
+    |``````/
+json =
+  * `"\t line1\\\r\n"`
+  * `"\t line1"`
+  * `"\t line1"`
+  * `"\t line1\\\r\n\t line2\r\n"`
+  * `"\t line1 line2\r\n"`
+  * `"\t line1 line2\r\n"`
+  * `"\t line1\\\r\n\t line2\\\r\n"`
+  * `"\t line1 line2"`
+  * `"\t line1 line2"`
+  * `"\t line1\r\n\t line2\\\r\n\t line3\\\r\n"`
+  * `"\t line1\r\n\t line2 line3"`
+  * `"\t line1\r\n\t line2 line3"`
 
 
 |=== test_scalar_tags_bytes

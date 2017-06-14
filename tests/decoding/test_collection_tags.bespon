@@ -1,0 +1,171 @@
+# Copyright (c) 2017, Geoffrey M. Poore
+# License:  Creative Commons Attribution 4.0 International Public License
+#           https://creativecommons.org/licenses/by/4.0/legalcode
+#
+# Tags on collections
+
+
+|=== test_collection_tags_general
+status = valid
+bespon =
+  * |```
+    (dict)>
+    k = v
+    |```/
+  * |```
+    (dict)> {k = v}
+    |```/
+  * |```
+    (list)>
+    * item
+    |```/
+  * |```
+    (list)> [item]
+    |```/
+json =
+  * `{"k": "v"}`
+  * `{"k": "v"}`
+  * `["item"]`
+  * `["item"]`
+
+
+|=== test_collection_tags_dict
+status = valid
+bespon =
+  * |```
+    (dict)>
+    k1 = v1
+    k2 = v2
+    |```/
+  * |```
+    (dict)>
+      k1 = v1
+      k2 = v2
+    |```/
+  * |```
+    (dict)> {k1 = v1, k2 = v2}
+    |```/
+  * |```
+    (dict)> {
+      k1 = v1, k2 = v2}
+    |```/
+  * |```
+    (dict)> {
+      k1 = v1, k2 = v2
+    }
+    |```/
+  * |```
+    (dict)>
+    {k1 = v1, k2 = v2}
+    |```/
+  * |```
+    (dict)>
+      {k1 = v1, k2 = v2}
+    |```/
+  * |```
+    (dict)>
+      {k1 = v1,
+       k2 = v2}
+    |```/
+  * |```
+    (dict)>
+      {
+        k1 = v1,
+        k2 = v2
+      }
+    |```/
+json = `{"k1": "v1", "k2": "v2"}`
+
+
+|=== test_invalid_collection_tags_dict
+status = invalid
+bespon =
+  * |```
+      (dict)>
+    k1 = v1
+    k2 = v2
+    |```/
+  * |```
+      (dict)>
+    {k1 = v1, k2 = v2}
+    |```/
+  * |```
+      (dict)> {
+    k1 = v1, k2 = v2}
+    |```/
+  * |```
+      (dict)> {
+      k1 = v1, k2 = v2
+    }
+    |```/
+
+
+|=== test_collection_tags_list
+status = valid
+bespon =
+  * |```
+    (list)>
+    * v1
+    * v2
+    |```/
+  * |```
+    (list)>
+      * v1
+      * v2
+    |```/
+  * |```
+    (list)> [v1, v2]
+    |```/
+  * |```
+    (list)> [
+      v1, v2]
+    |```/
+  * |```
+    (list)> [
+      v1, v2
+    ]
+    |```/
+  * |```
+    (list)>
+    [v1, v2]
+    |```/
+  * |```
+    (list)>
+      [v1, v2]
+    |```/
+  * |```
+    (list)>
+      [v1,
+       v2]
+    |```/
+  * |```
+    (list)>
+      [
+        v1,
+        v2
+      ]
+    |```/
+json = `["v1", "v2"]`
+
+
+|=== test_invalid_collection_tags_list
+status = invalid
+bespon =
+  * |```
+      (list)>
+    * v1
+    * v2
+    |```/
+  * |```
+      (list)>
+    [v1, v2]
+    |```/
+  * |```
+      (list)> [
+    v1, v2]
+    |```/
+  * |```
+      (list)> [
+      v1, v2
+    ]
+    |```/
