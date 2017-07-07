@@ -86,6 +86,16 @@ bespon =
     k2 = v2
     |```/
   * |```
+    k1 = v1
+    (dict)>
+    k2 = v2
+    |```/
+  * |```
+    dict = (dict)>
+      k1 = v1
+      k2 = v2
+    |```/
+  * |```
       (dict)>
     {k1 = v1, k2 = v2}
     |```/
@@ -157,6 +167,11 @@ bespon =
     * v2
     |```/
   * |```
+    * v1
+    (list)>
+    * v2
+    |```/
+  * |```
       (list)>
     [v1, v2]
     |```/
@@ -167,5 +182,152 @@ bespon =
   * |```
       (list)> [
       v1, v2
+    ]
+    |```/
+
+
+|=== test_collection_tags_doc_comment_dict
+status = valid
+bespon =
+  * |```
+    ### doc comment ###
+    (dict)>
+    k = v
+    |```/
+  * |```
+    ### doc comment ###
+    (dict)>
+     k = v
+    |```/
+  * |```
+    ### doc comment ###
+    (dict)> {k = v}
+    |```/
+  * |```
+    ### doc comment ###
+    (dict)> {
+    k = v}
+    |```/
+  * |```
+    ### doc comment ###
+    (dict)> {
+      k = v
+    }
+    |```/
+json = `{"k": "v"}`
+
+
+|=== test_invalid_collection_tags_doc_comment_dict
+status = invalid
+bespon =
+  * |```
+    ### doc comment ### (dict)>
+    k = v
+    |```/
+  * |```
+    ### doc comment ###
+    (dict)> k = v
+    |```/
+  * |```
+    ### doc comment ###
+      (dict)>
+      k = v
+    |```/
+  * |```
+      ### doc comment ###
+    (dict)>
+    k = v
+    |```/
+  * |```
+    ### doc comment ###
+      (dict)> {k = v}
+    |```/
+  * |```
+      ### doc comment ###
+    (dict)> {k = v}
+    |```/
+  * |```
+    ### doc comment ###
+      (dict)>
+    {k = v}
+    |```/
+  * |```
+      ### doc comment ###
+    (dict)> {
+      k = v
+    }
+    |```/
+
+
+|=== test_collection_tags_doc_comment_list
+status = valid
+bespon =
+  * |```
+    ### doc comment ###
+    (list)>
+    * v
+    |```/
+  * |```
+    ### doc comment ###
+    (list)>
+      * v
+    |```/
+  * |```
+    ### doc comment ###
+    (list)> [v]
+    |```/
+  * |```
+    ### doc comment ###
+    (list)> [
+    v]
+    |```/
+  * |```
+    ### doc comment ###
+    (list)> [
+      v
+    ]
+    |```/
+json = `["v"]`
+
+
+|=== test_invalid_collection_tags_doc_comment_list
+status = invalid
+bespon =
+  * |```
+    ### doc comment ### (list)>
+    * v
+    |```/
+  * |```
+      ### doc comment ###
+      (list)>
+    * v
+    |```/
+  * |```
+    ### doc comment ###
+      (list)>
+      * v
+    |```/
+  * |```
+      ### doc comment ###
+    (list)>
+    * v
+    |```/
+  * |```
+    ### doc comment ###
+      (list)> [v]
+    |```/
+  * |```
+      ### doc comment ###
+    (list)> [v]
+    |```/
+  * |```
+    ### doc comment ###
+      (list)>
+    [v]
+    |```/
+  * |```
+      ### doc comment ###
+    (list)> [
+      v
     ]
     |```/

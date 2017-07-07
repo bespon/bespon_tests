@@ -172,3 +172,38 @@ bespon =
     |=== key.subkey another_key.another_subkey
     val
     |```/
+
+
+|=== test_invalid_tag_section
+status = invalid
+bespon =
+  * |```
+    |=== (bytes)> binary
+    value
+    |```/
+  * |```
+    (bytes)>
+    |=== binary
+    value
+    |```/
+# Need to finalize grammar regarding doc comments and types at root level
+#   * |```
+#     (dict)>
+#     |=== binary
+#     value
+#     |```/
+
+
+|=== test_invalid_doc_comment_section
+status = invalid
+bespon =
+  * |```
+    |=== ### doc comment ###  key
+    value
+    |```/
+# Need to finalize grammar regarding doc comments and types at root level
+#   * |```
+#     ### doc comment ###
+#     |=== key
+#     value
+#     |```/

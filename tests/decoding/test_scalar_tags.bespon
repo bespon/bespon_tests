@@ -204,7 +204,7 @@ bespon =
     |```/
     |``````/
   * |``````
-    ('indent'='\n')>
+    ('indent'=' ')>
     |```
     text
     |```/
@@ -563,3 +563,130 @@ bespon =
   * |``````
     (base64)> '\U00000064GV4dCDDvw=='
     |``````/
+
+
+|=== test_scalar_tags_doc_comment
+status = valid
+bespon =
+  * |```
+    key =
+      ### doc comment ###
+      (bytes)> binary
+    |```/
+  * |```
+    key =
+      |###
+      doc comment
+      |###/
+      (bytes)> binary
+    |```/
+  * |```
+    key =
+      ### doc comment ###
+      (bytes)>
+      binary
+    |```/
+  * |```
+    key =
+      ### doc comment ###
+      (
+        bytes
+      )>
+      binary
+    |```/
+  * |```
+    key = ### doc comment ### (bytes)> binary
+    |```/
+  * |```
+    key = ### doc comment ###
+     (bytes)> binary
+    |```/
+  * |```
+    key = ### doc comment ### (
+    bytes
+    )> binary
+    |```/
+  * |```
+    key = ### doc comment ### (
+    bytes
+    )>
+     binary
+    |```/
+  * |```
+    key = ### doc comment ### (
+    bytes
+    )> |"""
+    bin\
+    ary\
+    |"""/
+    |```/
+  * |```
+    {key = ### doc comment ###  (bytes)> binary}
+    |```/
+  * |```
+    {key =
+    ### doc comment ###
+    (bytes)>
+    binary
+    }
+    |```/
+  * |```
+    {key = ### doc comment ###
+      (bytes)>
+    binary}
+    |```/
+  * |```
+    {key =
+        ### doc comment ###
+      (bytes)>
+    binary}
+    |```/
+  * |```
+    {key = ### doc comment ###  (
+    bytes
+    )> binary
+    }
+    |```/
+json = `{"key": [":bytes", "binary"]}`
+
+
+|=== test_invalid_scalar_tags_doc_comment
+status = invalid
+bespon =
+  * |```
+    key =
+      ### doc comment ###
+       (bytes)> binary
+    |```/
+  * |```
+    key =
+       ### doc comment ###
+      (bytes)> binary
+    |```/
+  * |```
+    key =
+       ### doc comment ###
+       (bytes)>
+      binary
+    |```/
+  * |```
+    key = ### doc comment ### (bytes)>
+    binary
+    |```/
+  * |```
+    key = ### doc comment ###
+    (bytes)> binary
+    |```/
+  * |```
+    key =
+    ### doc comment ### (bytes)> binary
+    |```/
+  * |```
+    key = ### doc comment ### (bytes
+    )>
+    binary
+    |```/
+  * |```
+    key =
+      ### doc comment ### (bytes)> binary
+    |```/

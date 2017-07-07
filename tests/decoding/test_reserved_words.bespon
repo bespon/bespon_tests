@@ -12,16 +12,10 @@ bespon = 'none'
 json = 'null'
 
 
-|=== test_bool_true
+|=== test_boolean
 status = valid
-bespon = 'true'
-json = 'true'
-
-
-|=== test_bool_false
-status = valid
-bespon = 'false'
-json = 'false'
+bespon = ['true', 'false']
+json = ['true', 'false']
 
 
 |=== test_float_positive_inf
@@ -46,3 +40,9 @@ json = '[":float64", "nan"]'
 status = invalid
 bespon = ['None', 'NONE', 'True', 'tRue', 'TRUE', 'False', 'fAlse', 'falsE',
           'Inf', 'iNf', 'inF', 'INF', 'Nan', 'NaN', 'NAN', 'nAn']
+
+
+|=== test_reserved_word
+status = invalid
+bespon = ['infi', 'Infi', 'INFI', 'nani', 'Nani', 'NANI',
+          'infj', 'nanj', 'infk', 'nank']
