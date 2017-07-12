@@ -59,6 +59,12 @@ def _int64(s, base=10):
         raise ValueError
     return n
 
+def _alias(path, raw_json_root):
+    pos = raw_json_root
+    for elem in path:
+        pos = pos[elem]
+    return pos
+
 JSON_TYPELIST_PARSERS = {':int64': _int64,
                          ':bigint': int,
                          ':int64:2': lambda x: _int64(x, 2),
@@ -70,7 +76,8 @@ JSON_TYPELIST_PARSERS = {':int64': _int64,
                          ':utf8': lambda x: x.encode('utf8'),
                          # Dict is needed to provide mappings with non-string
                          # keys (none, bool, int)
-                         ':dict': dict}
+                         ':dict': dict,
+                         ':alias': _alias}
 
 
 def find_json_untyped(obj, parent, index, unresolved):
@@ -113,8 +120,48 @@ def json_typelist_loads(s):
     if unresolved:
         # Work from deepest nesting level outward; hence `reversed()`
         for typename, obj, parent, index in reversed(unresolved):
-            parent[index] = JSON_TYPELIST_PARSERS[typename](obj)
+            if typename != ':alias':
+                parent[index] = JSON_TYPELIST_PARSERS[typename](obj)
+            else:
+                parent[index] = JSON_TYPELIST_PARSERS[typename](obj, raw_json_data)
     return json_wrapped[0]
+
+
+def equivalent(a, b, circular_cache=None,
+               type=type, dict=dict, list=list, float=float, complex=complex,
+               len=len, all=all, id=id, zip=zip, isnan=math.isnan):
+    '''
+    Compare two objects for equivalence, taking into consideration the
+    possibility of things like circular references and NaN that would make a
+    simple `==` equality test fail.
+    '''
+    if circular_cache is None:
+        circular_cache = set()
+    if type(a) != type(b):
+        return False
+    if isinstance(a, dict) or isinstance(a, list):
+        id_a = id(a)
+        id_b = id(b)
+        pair = (id_a, id_b)
+        if pair in circular_cache:
+            if len([x for x in circular_cache if x[0] == id_a or x[1] == id_b]) > 1:
+                return False
+            return True
+        circular_cache.update((pair,))
+        if len(a) != len(b):
+            return False
+        if isinstance(a, dict):
+            if not all(k in b for k in a):
+                return False
+            return all(equivalent(a[k], b[k], circular_cache=circular_cache) for k in a)
+        if isinstance(a, list):
+            return all(equivalent(a_i, b_i, circular_cache=circular_cache) for a_i, b_i in zip(a, b))
+        raise Exception
+    if isinstance(a, float):
+        return a == b or (isnan(a) and isnan(b))
+    if isinstance(a, complex):
+        return ((a.real == b.real) or (isnan(a.real) and isnan(b.real))) and ((a.imag == b.imag) or (isnan(a.imag) and isnan(b.imag)))
+    return a == b
 
 
 test_fnames = (fname for fname in os.listdir(test_dir) if fname.startswith('test_') and fname.endswith('.bespon'))
@@ -166,14 +213,15 @@ for fname in test_fnames:
                     json_data = [json_typelist_loads(x) for x in test_val['json']]
                     if len(json_data) != len(raw_data):
                         raise ValueError('Missing json values in test "{0}" in "{1}"'.format(test_key, fname))
-                if not all(b == j or (isinstance(b, float) and math.isnan(b) and math.isnan(j)) for b, j in zip(bespon_data, json_data)):
+                equivalence_tests = [equivalent(b, j) for b, j in zip(bespon_data, json_data)]
+                if not all(equivalence_tests):
                     failed_count += 1
                     if len(bespon_data) == 1:
                         failed_tests[fname].append(test_key)
                     else:
                         failed_subtest_numbers = []
-                        for n, (b, j) in enumerate(zip(bespon_data, json_data)):
-                            if b != j and not (isinstance(b, float) and math.isnan(b) and math.isnan(j)):
+                        for n, t in enumerate(equivalence_tests):
+                            if not t:
                                 failed_subtest_numbers.append(n+1)
                         if len(failed_subtest_numbers) == 1:
                             failed_tests[fname].append(test_key + ' (subtest {0})'.format(', '.join(str(x) for x in failed_subtest_numbers)))

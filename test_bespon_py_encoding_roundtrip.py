@@ -63,6 +63,8 @@ for fname in test_fnames:
     with open(os.path.join(test_dir, fname), encoding='utf8') as f:
         data = bespon.load(f)
     for test_key, test_val in data.items():
+        if 'alias' in test_key:
+            continue
         test_count += 1
         if isinstance(test_val['bespon'], str):
             raw_data = [test_val['bespon']]
@@ -103,7 +105,7 @@ for fname in test_fnames:
                     failed_tests[fname].append(test_key + ' (subtest {0})'.format(subtest_number))
 
 
-print('Found {0} tests with {1} subtests in {2} files'.format(test_count, subtest_count, file_count))
+print('Found {0} tests with {1} subtests in {2} files\n(skipping alias tests, which are not yet supported by encoder)'.format(test_count, subtest_count, file_count))
 print('Passed:  {0}    Failed:  {1}'.format(test_count - failed_count, failed_count))
 if failed_tests:
     for fname, messages in failed_tests.items():

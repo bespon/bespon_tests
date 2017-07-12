@@ -1,0 +1,277 @@
+# Copyright (c) 2017, Geoffrey M. Poore
+# License:  Creative Commons Attribution 4.0 International Public License
+#           https://creativecommons.org/licenses/by/4.0/legalcode
+#
+# Test aliases
+
+
+|=== test_alias_root
+status = valid
+bespon =
+  * |```
+    key1 = val
+    key2 = $~.key1
+    |```/
+  * `{key1 = val, key2 = $~.key1}`
+json =
+  * `{"key1": "val", "key2": [":alias", ["key1"]]}`
+  * `{"key1": "val", "key2": [":alias", ["key1"]]}`
+
+
+|=== test_invalid_alias_root
+status = invalid
+bespon =
+  * `$~`
+  * |```
+    key = $~.key
+    |```/
+  * `{key = $~.key}`
+  * |```
+    key = $~.k
+    |```/
+  * `{key = $~.k}`
+  * |```
+    * $~.k
+    |```/
+  * `[$~.k]`
+  * `[$ ~]`
+  * `{key = $ ~}`
+
+
+|=== test_alias_relative
+status = valid
+bespon =
+  * |```
+    key1 = val
+    key2 = $_.key1
+    |```/
+  * `{key1 = val, key2 = $_.key1}`
+  * `{a.b.c = val, d = $_.a.b.c}`
+json =
+  * `{"key1": "val", "key2": [":alias", ["key1"]]}`
+  * `{"key1": "val", "key2": [":alias", ["key1"]]}`
+  * `{"a": {"b": {"c": "val"}}, "d": [":alias", ["a", "b", "c"]]}`
+
+
+|=== test_invalid_alias_relative
+status = invalid
+bespon =
+  * |```
+    * $ _
+    |```/
+  * `[$ _]`
+  * |```
+    * $_.k
+    |```/
+  * `[$_.k]`
+  * |```
+    key = $ _
+    |```/
+  * `{key = $ _}`
+  * |```
+    key = $_.k
+    |```/
+  * `{key = $_.k}`
+  * |```
+    key1 = val
+    key2 = $_ .key1
+    |```/
+  * |```
+    key1 = val
+    key2 = $_. key1
+    |```/
+  * `{key1 = val, key2 = $_ .key1}`
+  * `{key1 = val, key2 = $_. key1}`
+  * |```
+    key1 = val
+    key2 = $_.k
+    |```/
+  * `{key1 = val, key2 = $_.k}`
+  * `{a.b.c = val, d = $_.a.b. c}`
+  * `{a.b.c = val, d = $_.a.b .c}`
+  * `{a.b.c = val, d = $_.a.b.c.k}`
+
+
+|=== test_alias_label
+status = valid
+bespon =
+  * |```
+    (dict, label=name)>
+    key1 = val
+    key2 = $name.key1
+    |```/
+  * `(label=name)> {key1 = val, key2 = $name.key1}`
+  * `(label=name)> {a.b.c = val, d = $name.a.b.c}`
+json =
+  * `{"key1": "val", "key2": [":alias", ["key1"]]}`
+  * `{"key1": "val", "key2": [":alias", ["key1"]]}`
+  * `{"a": {"b": {"c": "val"}}, "d": [":alias", ["a", "b", "c"]]}`
+
+
+|=== test_invalid_alias_label
+status = invalid
+bespon =
+  * |```
+    (label='name')>
+    * $name
+    |```/
+  * |```
+    ('label'=name)>
+    * $name
+    |```/
+  * |```
+    (label=name)>
+    key = $name
+    |```/
+  * |```
+    (dict, label=name)>
+    key = $name.key
+    |```/
+  * |```
+    (dict, label=name)>
+    key = $name.k
+    |```/
+
+
+|=== test_alias_init
+status = valid
+bespon =
+  * |```
+    initial =
+      * v1
+    result =
+      (init=$~.initial)>
+      * v2
+      * v3
+    |```/
+  * |```
+    initial =
+      k1 = v1
+    result =
+      (dict, init=$~.initial)>
+      k2 = v2
+      k3 = v3
+    alias = $_.result.k1
+    |```/
+json =
+  * |```
+    {"initial": ["v1"],
+     "result": ["v1", "v2", "v3"]}
+    |```/
+  * |```
+    {"initial": {"k1": "v1"},
+     "result": {"k1": "v1", "k2": "v2", "k3": "v3"},
+     "alias": "v1"}
+    |```/
+
+
+|=== test_invalid_alias_init
+status = invalid
+bespon =
+  * |```
+    initial =
+      k1 = v1
+      k2 = v2
+    result =
+      (dict, init=$~.initial)>
+      k2 = v2
+      k3 = v3
+    |```/
+
+
+|=== test_alias_default
+status = valid
+bespon =
+  * |```
+    initial =
+      k1 = v1
+    default =
+      k4 = v4
+      k5 = v5
+    result =
+      (dict, init=$~.initial, default=$~.default)>
+      k2 = v2
+      k3 = v3
+    |```/
+  * |```
+    initial =
+      k1 = v1
+    default =
+      k1 = not_used
+      k2 = not_used
+      k3 = not_used
+      k4 = v4
+      k5 = v5
+    result =
+      (dict, init=$~.initial, default=$~.default)>
+      k2 = v2
+      k3 = v3
+    |```/
+json =
+  * |```
+    {"initial": {"k1": "v1"},
+     "default": {"k4": "v4", "k5": "v5"},
+     "result": {"k1": "v1", "k2": "v2", "k3": "v3", "k4": "v4", "k5": "v5"}}
+    |```/
+  * |```
+    {"initial": {"k1": "v1"},
+     "default": {"k1": "not_used", "k2": "not_used", "k3": "not_used",
+                 "k4": "v4", "k5": "v5"},
+     "result": {"k1": "v1", "k2": "v2", "k3": "v3", "k4": "v4", "k5": "v5"}}
+    |```/
+
+
+|=== test_alias_extend
+status = valid
+bespon =
+  * |```
+    initial =
+      * v1
+    extend =
+      * v4
+      * v5
+    result =
+      (init=$~.initial, extend=$~.extend)>
+      * v2
+      * v3
+    |```/
+json =
+  * |```
+    {"initial": ["v1"],
+     "extend": ["v4", "v5"],
+     "result": ["v1", "v2", "v3", "v4", "v5"]}
+    |```/
+
+
+|=== test_invalid_alias_circular
+status = invalid
+bespon =
+  * |```
+    * $~
+    |```/
+  * `[$~]`
+  * |```
+    key = $~
+    |```/
+  * `{key = $~}`
+  * `[[$~]]`
+  * `{key = {subkey = $~}}`
+  * |```
+    * $_
+    |```/
+  * `[$_]`
+  * |```
+    key = $_
+    |```/
+  * `{key = $_}`
+  * |```
+    (label=name)>
+    * $name
+    |```/
+  * `(label=name)> [$name]`
+  * |```
+    (dict, label=name)>
+    key = $name
+    |```/
+  * `(label=name)> {key = $name}`
+  * `[ (label=a)> [$b], (label=b)> [$a] ]`
