@@ -1,0 +1,263 @@
+# Copyright (c) 2017, Geoffrey M. Poore
+# License:  Creative Commons Attribution 4.0 International Public License
+#           https://creativecommons.org/licenses/by/4.0/legalcode
+#
+# Test decoder options
+
+
+|=== test_decoder_options_aliases_default
+status = valid
+options = {}
+bespon = `{key = val, another_key = $~.key}`
+json = `{"key": "val", "another_key": [":alias", ["key"]]}`
+
+
+|=== test_decoder_options_aliases_true
+status = valid
+options = {aliases = true}
+bespon = $~.test_decoder_options_aliases_default.bespon
+json = $~.test_decoder_options_aliases_default.json
+
+
+|=== test_decoder_options_aliases_false
+status = invalid
+options = {aliases = false}
+bespon = $~.test_decoder_options_aliases_default.bespon
+
+
+
+
+|=== test_decoder_options_circular_references_default
+status = invalid
+options = {}
+bespon = `[$~]`
+
+
+|=== test_decoder_options_circular_references_false
+status = invalid
+options = {circular_references = false}
+bespon = $~.test_decoder_options_circular_references_default.bespon
+
+
+|=== test_decoder_options_circular_references_true
+status = valid
+options = {circular_references = true}
+bespon = $~.test_decoder_options_circular_references_default.bespon
+json = `[ [":alias", []] ]`
+
+
+
+
+|=== test_decoder_options_custom_parsers_int_float
+status = valid
+options = {custom_parsers = {int = (parser)> float}}
+bespon = `1`
+json = `[":float64", "1.0"]`
+
+
+|=== test_decoder_options_custom_parsers_int_str
+status = valid
+options = {custom_parsers = {int = (parser)> str}}
+bespon = `1`
+json = `"1"`
+
+
+
+
+|=== test_decoder_options_extended_types_default
+status = invalid
+options = {}
+bespon =
+  * `(set)> [a, b, c]`
+  * `(odict)> {k = v}`
+  * `1.0i`
+  * `1.0 + 2.0i`
+  * `2.0i + 1.0`
+  * `infi`
+  * `inf + 1.0i`
+  * `infi + 1.0`
+  * `1.0 + infi`
+  * `1.0i + inf`
+  * `[2/3, -2/3, +2/3]`
+
+
+|=== test_decoder_options_extended_types_false
+status = invalid
+options = {extended_types = false}
+bespon = $~.test_decoder_options_extended_types_default.bespon
+
+
+|=== test_decoder_options_extended_types_true
+status = valid
+options = {extended_types = true}
+bespon = $~.test_decoder_options_extended_types_default.bespon
+json =
+  * `[":set", ["a", "b", "c"]]`
+  * `[":odict", {"k": "v"}]`
+  * `[":complex128", "1.0i"]`
+  * `[":complex128", "1.0 + 2.0i"]`
+  * `[":complex128", "2.0i + 1.0"]`
+  * `[":complex128", "infi"]`
+  * `[":complex128", "inf + 1.0i"]`
+  * `[":complex128", "infi + 1.0"]`
+  * `[":complex128", "1.0 + infi"]`
+  * `[":complex128", "1.0i + inf"]`
+  * `[ [":rational", "2/3"], [":rational", "-2/3"], [":rational", "+2/3"]]`
+
+
+
+
+|=== test_decoder_options_float_overflow_to_inf_default
+status = invalid
+options = {}
+bespon = `1.0e1000`
+
+
+|=== test_decoder_options_float_overflow_to_inf_false
+status = invalid
+options = {float_overflow_to_inf = false}
+bespon = $~.test_decoder_options_float_overflow_to_inf_default.bespon
+
+
+|=== test_decoder_options_float_overflow_to_inf_true
+status = valid
+options = {float_overflow_to_inf = true}
+bespon = $~.test_decoder_options_float_overflow_to_inf_default.bespon
+json = `[":float64", "inf"]`
+
+
+
+
+|=== test_decoder_options_integers_default
+status = valid
+options = {}
+bespon = `1`
+json = `[":int64", "1"]`
+
+
+|=== test_decoder_options_integers_true
+status = valid
+options = {integers = true}
+bespon = $~.test_decoder_options_integers_default.bespon
+json = $~.test_decoder_options_integers_default.json
+
+
+|=== test_decoder_options_integers_false
+status = valid
+options = {integers = false}
+bespon = `1`
+json = `[":float64", "1.0"]`
+
+
+
+
+|=== test_decoder_options_only_ascii_unquoted_default
+status = invalid
+options = {}
+bespon =
+  * `Ä`
+  * `ä`
+
+
+|=== test_decoder_options_only_ascii_unquoted_true
+status = invalid
+options = {only_ascii_unquoted = true}
+bespon = $~.test_decoder_options_only_ascii_unquoted_default.bespon
+
+
+|=== test_decoder_options_only_ascii_unquoted_false
+status = valid
+options = {only_ascii_unquoted = false}
+bespon = $~.test_decoder_options_only_ascii_unquoted_default.bespon
+json =
+  * `"Ä"`
+  * `"ä"`
+
+
+
+
+|=== test_decoder_options_only_ascii_source_default
+status = valid
+options = {}
+bespon =
+  * `"Ä"`
+  * `"ä"`
+json =
+  * `"Ä"`
+  * `"ä"`
+
+
+|=== test_decoder_options_only_ascii_source_false
+status = valid
+options = {only_ascii_source = false}
+bespon = $~.test_decoder_options_only_ascii_source_default.bespon
+json = $~.test_decoder_options_only_ascii_source_default.json
+
+
+|=== test_decoder_options_only_ascii_source_true
+status = invalid
+options = {only_ascii_source = true}
+bespon = $~.test_decoder_options_only_ascii_source_default.bespon
+
+
+
+
+|=== test_decoder_options_python_types_default
+status = invalid
+options = {}
+bespon = `(tuple)> [text]`
+
+
+|=== test_decoder_options_python_types_false
+status = invalid
+options = {python_types = false}
+bespon = $~.test_decoder_options_python_types_default.bespon
+
+
+|=== test_decoder_options_python_types_true
+status = valid
+options = {python_types = true}
+bespon = $~.test_decoder_options_python_types_default.bespon
+json = `[":tuple", ["text"]]`
+
+
+
+
+# The default value of 100 is tested as part of dict and list tests.
+|=== test_decoder_options_max_nesting_depth_valid_0
+status = valid
+options = {max_nesting_depth = 0}
+bespon = `text`
+json = `"text"`
+
+
+|=== test_decoder_options_max_nesting_depth_invalid_0
+status = invalid
+options = {max_nesting_depth = 0}
+bespon = `[text]`
+
+
+|=== test_decoder_options_max_nesting_depth_valid_1
+status = valid
+options = {max_nesting_depth = 1}
+bespon = `[text]`
+json = `["text"]`
+
+
+|=== test_decoder_options_max_nesting_depth_invalid_1
+status = invalid
+options = {max_nesting_depth = 1}
+bespon = `[[text]]`
+
+
+|=== test_decoder_options_max_nesting_depth_valid_2
+status = valid
+options = {max_nesting_depth = 2}
+bespon = `[[text]]`
+json = `[["text"]]`
+
+
+|=== test_decoder_options_max_nesting_depth_invalid_2
+status = invalid
+options = {max_nesting_depth = 2}
+bespon = `[[[text]]]`

@@ -25,6 +25,7 @@ import argparse
 import collections
 import json
 import math
+import fractions
 if sys.version_info.major == 2:
     from io import open
     str = unicode
@@ -65,6 +66,28 @@ def _alias(path, raw_json_root):
         pos = pos[elem]
     return pos
 
+def _complex(x):
+    x = x.replace('\x20', '').replace('\t', '')
+    for s in '+-':
+        second_sign_index = x.find(s, 1)
+        if second_sign_index > 0 and x[second_sign_index-1] in 'eEpP':
+            second_sign_index = x.find(s, second_sign_index+1)
+        if second_sign_index > 0:
+            break
+    if second_sign_index < 0:
+        x_real = '0.0'
+        x_imag = x
+    else:
+        x_real = x[:second_sign_index]
+        x_imag = x[second_sign_index:]
+        if x_real[-1] == 'i':
+            x_real, x_imag = x_imag, x_real
+    x_imag = x_imag[:-1] + 'j'
+    if x_imag[0] not in '+-':
+        x_imag = '+' + x_imag
+    x = x_real + x_imag
+    return complex(x)
+
 JSON_TYPELIST_PARSERS = {':int64': _int64,
                          ':bigint': int,
                          ':int64:2': lambda x: _int64(x, 2),
@@ -72,12 +95,17 @@ JSON_TYPELIST_PARSERS = {':int64': _int64,
                          ':int64:16': lambda x: _int64(x, 16),
                          ':float64': float,
                          ':float64:16': float.fromhex,
+                         ':complex128': _complex,
+                         ':rational': fractions.Fraction,
                          ':bytes': lambda x: x.encode('ascii'),
                          ':utf8': lambda x: x.encode('utf8'),
                          # Dict is needed to provide mappings with non-string
                          # keys (none, bool, int)
                          ':dict': dict,
-                         ':alias': _alias}
+                         ':alias': _alias,
+                         ':set': set,
+                         ':odict': collections.OrderedDict,
+                         ':tuple': tuple}
 
 
 def find_json_untyped(obj, parent, index, unresolved):
@@ -177,7 +205,7 @@ for fname in test_fnames:
         continue
     file_count += 1
     with open(os.path.join(test_dir, fname), encoding='utf8') as f:
-        data = bespon.load(f)
+        data = bespon.load(f, custom_types=bespon.LoadType(name='parser', compatible_implicit_types=['str'], parser=lambda x: {'int': int, 'float': float, 'str': str}[x]))
     for test_key, test_val in data.items():
         test_count += 1
         if isinstance(test_val['bespon'], str):
@@ -185,18 +213,19 @@ for fname in test_fnames:
         else:
             raw_data = test_val['bespon']
         subtest_count += len(raw_data)
+        decoder_kwargs = test_val.get('options', {})
         if test_val['status'] == 'valid':
             # All data must successfully load
             error = False
             try:
-                bespon_data = [bespon.loads(x) for x in raw_data]
+                bespon_data = [bespon.loads(x, **decoder_kwargs) for x in raw_data]
             except Exception as e:
                 error = True
                 failed_count += 1
                 failed_subtest_numbers = []
                 for n, x in enumerate(raw_data):
                     try:
-                        bespon.loads(x)
+                        bespon.loads(x, **decoder_kwargs)
                     except Exception as e:
                         failed_subtest_numbers.append(n+1)
                 if args.verbose:
@@ -232,7 +261,7 @@ for fname in test_fnames:
             error_count = 0
             for x in raw_data:
                 try:
-                    bespon.loads(x)
+                    bespon.loads(x, **decoder_kwargs)
                 except Exception as e:
                     error_count += 1
             if error_count != len(raw_data):
@@ -250,7 +279,7 @@ for fname in test_fnames:
             for x, j in zip(raw_data, json_data):
                 error = False
                 try:
-                    b = bespon.loads(x)
+                    b = bespon.loads(x, **decoder_kwargs)
                 except Exception as e:
                     error = True
                 if not error and not (b == j or (isinstance(b, float) and math.isnan(b) and math.isnan(j))):
