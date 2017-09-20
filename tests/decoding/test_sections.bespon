@@ -71,6 +71,43 @@ json =
   * `{"*": {"key": "value"}}`
 
 
+|=== test_doc_comment_tag_section
+status = valid
+bespon =
+  * |```
+    |=== key
+    (str)> subkey = value
+    |```/
+  * |```
+    |=== key
+    (dict)>
+    subkey = value
+    |```/
+  * |```
+    |=== key
+    (dict)>
+    (str)> subkey = value
+    |```/
+  * |```
+    |=== key
+    ### doc comment ###
+    (dict)>
+    ### doc comment ###
+    (str)> subkey =
+      ### doc comment ###
+      value
+    |```/
+  * |```
+    |=== key
+    ### doc comment ###
+    subkey =
+      ### doc comment ###
+      value
+    |```/
+json = `{"key": {"subkey": "value"}}`
+
+
+
 |=== test_invalid_section
 status = invalid
 bespon =

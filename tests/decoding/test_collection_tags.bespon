@@ -74,12 +74,21 @@ bespon =
         k2 = v2
       }
     |```/
+  * |```
+    (dict)>
+    (str)> k1 = v1
+    k2 = v2
+    |```/
 json = `{"k1": "v1", "k2": "v2"}`
 
 
 |=== test_invalid_collection_tags_dict
 status = invalid
 bespon =
+  * |```
+    (dict)>  k1 = v1
+             k2 = v2
+    |```/
   * |```
       (dict)>
     k1 = v1
@@ -107,6 +116,9 @@ bespon =
       (dict)> {
       k1 = v1, k2 = v2
     }
+    |```/
+  * |```
+    (dict)> text
     |```/
 
 
@@ -155,12 +167,21 @@ bespon =
         v2
       ]
     |```/
+  * |```
+    (list)>
+    * (str)> v1
+    * v2
+    |```/
 json = `["v1", "v2"]`
 
 
 |=== test_invalid_collection_tags_list
 status = invalid
 bespon =
+  * |```
+    (list)>  * v1
+             * v2
+    |```/
   * |```
       (list)>
     * v1
@@ -183,6 +204,9 @@ bespon =
       (list)> [
       v1, v2
     ]
+    |```/
+  * |```
+    (list)> text
     |```/
 
 
@@ -213,6 +237,18 @@ bespon =
     (dict)> {
       k = v
     }
+    |```/
+  * |```
+    (dict)>
+    ### doc comment ###
+    k = v
+    |```/
+  * |```
+    ### doc comment ###
+    (dict)>
+    ### doc comment ###
+    (str)>
+    k = v
     |```/
 json = `{"k": "v"}`
 
@@ -330,4 +366,26 @@ bespon =
     (list)> [
       v
     ]
+    |```/
+
+
+|=== test_collection_tags_explicit_type_indentation_dict
+status = valid
+bespon =
+  * |```
+    (dict, init=$init)>
+    k = v
+    init = (label=init)> {a = b}
+    |```/
+json =
+  * `{"a": "b", "k": "v", "init": {"a": "b"}}`
+
+
+|=== test_invalid_collection_tags_no_explicit_type_indentation_dict
+status = invalid
+bespon =
+  * |```
+    (init=$init)>
+    k = v
+    init = (label=init)> {a = b}
     |```/
