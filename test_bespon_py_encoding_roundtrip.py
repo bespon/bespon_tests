@@ -48,6 +48,43 @@ else:
     import bespon
 
 
+def equivalent(a, b, circular_cache=None,
+               type=type, dict=dict, list=list, float=float, complex=complex,
+               len=len, all=all, id=id, zip=zip, isnan=math.isnan):
+    '''
+    Compare two objects for equivalence, taking into consideration the
+    possibility of things like circular references and NaN that would make a
+    simple `==` equality test fail.
+    '''
+    if circular_cache is None:
+        circular_cache = set()
+    if type(a) != type(b):
+        return False
+    if isinstance(a, dict) or isinstance(a, list):
+        id_a = id(a)
+        id_b = id(b)
+        pair = (id_a, id_b)
+        if pair in circular_cache:
+            if len([x for x in circular_cache if x[0] == id_a or x[1] == id_b]) > 1:
+                return False
+            return True
+        circular_cache.update((pair,))
+        if len(a) != len(b):
+            return False
+        if isinstance(a, dict):
+            if not all(k in b for k in a):
+                return False
+            return all(equivalent(a[k], b[k], circular_cache=circular_cache) for k in a)
+        if isinstance(a, list):
+            return all(equivalent(a_i, b_i, circular_cache=circular_cache) for a_i, b_i in zip(a, b))
+        raise Exception
+    if isinstance(a, float):
+        return a == b or (isnan(a) and isnan(b))
+    if isinstance(a, complex):
+        return ((a.real == b.real) or (isnan(a.real) and isnan(b.real))) and ((a.imag == b.imag) or (isnan(a.imag) and isnan(b.imag)))
+    return a == b
+
+
 test_fnames = (fname for fname in os.listdir(test_dir) if fname.startswith('test_') and fname.endswith('.bespon'))
 
 file_count = 0
@@ -63,37 +100,39 @@ for fname in test_fnames:
     with open(os.path.join(test_dir, fname), encoding='utf8') as f:
         data = bespon.load(f, custom_types=bespon.LoadType(name='parser', compatible_implicit_types=['str'], parser=lambda x: {'int': int, 'float': float, 'str': str}[x]))
     for test_key, test_val in data.items():
-        if 'alias' in test_key or 'options' in test_key:
+        if 'float_overflow_to_inf' in test_key or 'custom_parsers' in test_key:
             continue
         test_count += 1
         if isinstance(test_val['bespon'], str):
             raw_data = [test_val['bespon']]
         else:
             raw_data = test_val['bespon']
+        options = test_val.get('options', {})
         subtest_count += len(raw_data)
         if test_val['status'] == 'valid':
             # All data must successfully load
             try:
-                bespon_data = [bespon.loads(x) for x in raw_data]
+                bespon_data = [bespon.loads(x, **options) for x in raw_data]
             except Exception as e:
                 raise Exception('Invalid data (run decoding tests before trying encoding tests again):\n  {0}'.format(e))
             error = False
             for n, b in enumerate(bespon_data):
                 try:
-                    encoded = bespon.dumps(b)
+                    encoded = bespon.dumps(b, **options)
                 except Exception as e:
+                    print(b)
                     error = True
                     subtest_number = n + 1
                     break
                 if not error:
                     try:
-                        b_roundtripped = bespon.loads(encoded)
+                        b_roundtripped = bespon.loads(encoded, **options)
                     except Exception as e:
                         error = True
                         subtest_number = n + 1
                         break
                 if not error:
-                    if b != b_roundtripped and not (isinstance(b, float) and ((math.isnan(b) and math.isnan(b_roundtripped)) or (float(str(b)) == b_roundtripped))):
+                    if not equivalent(b, b_roundtripped):
                         error = True
                         subtest_number = n + 1
                         break
@@ -105,7 +144,7 @@ for fname in test_fnames:
                     failed_tests[fname].append(test_key + ' (subtest {0})'.format(subtest_number))
 
 
-print('Found {0} tests with {1} subtests in {2} files\n(skipping alias and options tests, which are not yet supported by encoder)'.format(test_count, subtest_count, file_count))
+print('Found {0} tests with {1} subtests in {2} files\n(skipping lossy tests involving float_overflow_to_inf and custom_parsers)'.format(test_count, subtest_count, file_count))
 print('Passed:  {0}    Failed:  {1}'.format(test_count - failed_count, failed_count))
 if failed_tests:
     for fname, messages in failed_tests.items():
