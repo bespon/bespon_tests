@@ -32,11 +32,9 @@ if sys.version_info.major == 2:
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--basic', default=False, action='store_true',
-                    help='Only run basic tests (simple data of all types loads, but is not verified)')
+parser.add_argument('--basic', default=False, action='store_true', help='Only run basic tests')
 parser.add_argument('--bespon_py', help='Use bespon package at specified path, rather than installed bespon package')
-parser.add_argument('--verbose', default=False, action='store_true',
-                    help='More detailed error messages')
+parser.add_argument('--verbose', default=False, action='store_true', help='More detailed error messages')
 args = parser.parse_args()
 
 if os.path.isdir('bespon_tests'):

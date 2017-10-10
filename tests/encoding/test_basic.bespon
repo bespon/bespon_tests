@@ -1,0 +1,56 @@
+# Copyright (c) 2017, Geoffrey M. Poore
+# License:  Creative Commons Attribution 4.0 International Public License
+#           https://creativecommons.org/licenses/by/4.0/legalcode
+#
+# These tests provide a quick check of whether a variety of valid structures
+# can be saved.  This is primarily meant for use during the early stages
+# of writing an encoder, largely as a way to quickly determine which
+# data types can and cannot be saved.
+
+
+|=== test_root_scalar
+status = valid
+bespon = ['none\n', 'true\n', 'false\n',
+          '1\n', '1.0\n',
+          'inf\n', '-inf\n', 'nan\n',
+          'string\n', '"string string"\n',
+          '|"""\nstring\n|"""/\n']
+
+
+
+|=== test_root_indentation_dict
+status = valid
+bespon = |'''
+         key = value
+         another_key = another_value
+         |'''/
+
+
+|=== test_root_inline_dict
+status = valid
+bespon = |'''
+         {
+             key = value,
+             another_key = another_value
+         }
+         |'''/
+encoder_options = {inline_depth=0}
+
+
+|=== test_root_indentation_list
+status = valid
+bespon = |'''
+         * value
+         * "another value"
+         |'''/
+
+
+|=== test_root_inline_list
+status = valid
+bespon = |'''
+         [
+             value,
+             "another value"
+         ]
+         |'''/
+encoder_options = {inline_depth=0}

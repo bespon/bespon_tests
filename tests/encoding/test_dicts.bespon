@@ -1,0 +1,88 @@
+# Copyright (c) 2017, Geoffrey M. Poore
+# License:  Creative Commons Attribution 4.0 International Public License
+#           https://creativecommons.org/licenses/by/4.0/legalcode
+#
+# These tests provide a quick check of whether a variety of valid structures
+# can be saved.  This is primarily meant for use during the early stages
+# of writing an encoder, largely as a way to quickly determine which
+# data types can and cannot be saved.
+
+
+|=== test_nested_indentation_dict
+status = valid
+bespon =
+    |'''
+    key =
+        subkey =
+            subsubkey1 = value1
+            subsubkey2 = value2
+    |'''/
+
+
+|=== test_nested_inline_dict
+status = valid
+bespon =
+    |'''
+    {
+        key = {
+            subkey = {
+                subsubkey1 = value1,
+                subsubkey2 = value2
+            }
+        }
+    }
+    |'''/
+encoder_options = {inline_depth=0}
+
+
+|=== test_nested_mixed_dict
+status = valid
+bespon =
+    |'''
+    key =
+        subkey = {
+            subsubkey1 = value1,
+            subsubkey2 = value2
+        }
+    |'''/
+encoder_options = {inline_depth=2}
+
+
+|=== test_nested_inline_dict_trailing_commas
+status = valid
+bespon =
+    |'''
+    {
+        key = {
+            subkey = {
+                subsubkey1 = value1,
+                subsubkey2 = value2,
+            },
+        },
+    }
+    |'''/
+encoder_options = {inline_depth=0, trailing_commas=true}
+
+
+|=== test_indentation_dict_multiline_string
+status = valid
+bespon =
+    |'''
+    key =
+        |"""
+        value
+        |"""/
+    |'''/
+
+
+|=== test_indentation_dict_multiline_bytes
+status = valid
+bespon =
+    |'''
+    key =
+        (bytes)>
+        |"""
+        value
+        |"""/
+    |'''/
+
