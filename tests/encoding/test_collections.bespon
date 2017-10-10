@@ -1,0 +1,165 @@
+# Copyright (c) 2017, Geoffrey M. Poore
+# License:  Creative Commons Attribution 4.0 International Public License
+#           https://creativecommons.org/licenses/by/4.0/legalcode
+#
+# These tests provide a quick check of whether a variety of valid structures
+# can be saved.  This is primarily meant for use during the early stages
+# of writing an encoder, largely as a way to quickly determine which
+# data types can and cannot be saved.
+
+
+|=== test_nested_indentation_collections
+status = valid
+bespon =
+    |'''
+    key1 =
+        subkey1 =
+          * subvalue1
+          *
+            * subsubvalue2_1
+            * subsubvalue2_2
+          * value3
+          * key_in_list4 = subvalue4
+          * key_in_list5 =
+              * subsubvalue5_1
+              * subsubvalue5_2
+        subkey2 = true
+    key2 = value2
+    |'''/
+
+
+|=== test_nested_inline_collections
+status = valid
+bespon =
+    |'''
+    {
+        key1 = {
+            subkey1 = [
+                subvalue1,
+                [
+                    subsubvalue2_1,
+                    subsubvalue2_2
+                ],
+                value3,
+                {
+                    key_in_list4 = subvalue4
+                },
+                {
+                    key_in_list5 = [
+                        subsubvalue5_1,
+                        subsubvalue5_2
+                    ]
+                }
+            ],
+            subkey2 = true
+        },
+        key2 = value2
+    }
+    |'''/
+encoder_options = {inline_depth=0}
+
+
+|=== test_nested_mixed_collections_depth1
+status = valid
+bespon =
+    |'''
+    key1 = {
+        subkey1 = [
+            subvalue1,
+            [
+                subsubvalue2_1,
+                subsubvalue2_2
+            ],
+            value3,
+            {
+                key_in_list4 = subvalue4
+            },
+            {
+                key_in_list5 = [
+                    subsubvalue5_1,
+                    subsubvalue5_2
+                ]
+            }
+        ],
+        subkey2 = true
+    }
+    key2 = value2
+    |'''/
+encoder_options = {inline_depth=1}
+
+
+|=== test_nested_mixed_collections_depth2
+status = valid
+bespon =
+    |'''
+    key1 =
+        subkey1 = [
+            subvalue1,
+            [
+                subsubvalue2_1,
+                subsubvalue2_2
+            ],
+            value3,
+            {
+                key_in_list4 = subvalue4
+            },
+            {
+                key_in_list5 = [
+                    subsubvalue5_1,
+                    subsubvalue5_2
+                ]
+            }
+        ]
+        subkey2 = true
+    key2 = value2
+    |'''/
+encoder_options = {inline_depth=2}
+
+
+|=== test_nested_mixed_collections_depth3
+status = valid
+bespon =
+    |'''
+    key1 =
+        subkey1 =
+          * subvalue1
+          * [
+                subsubvalue2_1,
+                subsubvalue2_2
+            ]
+          * value3
+          * {
+                key_in_list4 = subvalue4
+            }
+          * {
+                key_in_list5 = [
+                    subsubvalue5_1,
+                    subsubvalue5_2
+                ]
+            }
+        subkey2 = true
+    key2 = value2
+    |'''/
+encoder_options = {inline_depth=3}
+
+
+|=== test_nested_mixed_collections_depth4
+status = valid
+bespon =
+    |'''
+    key1 =
+        subkey1 =
+          * subvalue1
+          *
+            * subsubvalue2_1
+            * subsubvalue2_2
+          * value3
+          * key_in_list4 = subvalue4
+          * key_in_list5 = [
+                subsubvalue5_1,
+                subsubvalue5_2
+            ]
+        subkey2 = true
+    key2 = value2
+    |'''/
+encoder_options = {inline_depth=4}
