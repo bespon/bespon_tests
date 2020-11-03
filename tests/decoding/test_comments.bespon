@@ -118,6 +118,14 @@ json =
 status = valid
 bespon =
   * |```
+    # empty comments and doc comments
+
+    #
+    |###
+    |###/
+    val
+    |```/
+  * |```
     |###
     doc comment
     |###/
@@ -182,6 +190,7 @@ bespon =
      second]
     |```/
 json =
+  * `"val"`
   * `"val"`
   * `{"key": "val"}`
   * `{"key": "val"}`

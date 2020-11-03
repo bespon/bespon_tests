@@ -394,3 +394,23 @@ json = '"string"'
 status = invalid
 bespon = ['\u0000string', '\uFEFF\uFEFFstring', 'string\r',
           '"\uFFFE"', '"\uD800"', '"\uDFFF"']
+
+
+|=== test_empty
+status = valid
+bespon =
+  * `''`
+  * `""`
+  * |``````
+    |```
+    |```/
+    |``````/
+  * |```
+    |'''
+    |'''/
+    |```/
+  * |```
+    |"""
+    |"""/
+    |```/
+json = `""`
