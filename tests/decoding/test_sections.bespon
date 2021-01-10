@@ -57,7 +57,21 @@ bespon =
     |=== *
     another_key = another_value
     |```/
-json = `[{"key": "value"}, {"another_key": "another_value"}]`
+  * |```
+    |=== key.subkey
+    * list_item_1
+    * list_item_2
+    |```/
+  * |```
+    |=== key.*
+    first
+    |=== key.*
+    second
+    |```/
+json =
+  * `[{"key": "value"}, {"another_key": "another_value"}]`
+  * `{"key": {"subkey": ["list_item_1", "list_item_2"]}}`
+  * `{"key": ["first", "second"]}`
 
 
 |=== test_string_section
